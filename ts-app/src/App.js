@@ -1,11 +1,19 @@
+import { Route, Router, Routes } from 'react-router-dom';
 import './App.css';
-import LoginForm from './components/form/LoginForm';
+import InitialiseScreen from './components/form/Initialise';
 
 
 function App() {
   return (
     <div>
-      <LoginForm />
+      <InitialiseScreen />
+      <Router>
+        <Routes>
+          <Route path="/" element={<InitialiseScreen />} />
+          <Route path="/register" element={<CreateAccountScreen />} />
+
+        </Routes>
+      </Router>
     </div>
   );
 }
