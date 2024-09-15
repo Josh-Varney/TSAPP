@@ -1,20 +1,16 @@
-import { Route, Router, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import BrowserRouter
 import './App.css';
 import InitialiseScreen from './components/form/Initialise';
-
+import CreateAccountScreen from './components/form/Create';
 
 function App() {
   return (
-    <div>
-      <InitialiseScreen />
-      <Router>
-        <Routes>
-          <Route path="/" element={<InitialiseScreen />} />
-          <Route path="/register" element={<CreateAccountScreen />} />
-
-        </Routes>
-      </Router>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<InitialiseScreen />} />
+        <Route path="/register" element={<CreateAccountScreen />} />
+      </Routes>
+    </Router>
   );
 }
 

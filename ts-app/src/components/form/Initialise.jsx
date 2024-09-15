@@ -3,10 +3,14 @@ import { FaUser, FaLock } from "react-icons/fa";
 import backgroundImage from '../assets/mountain.jpg'; 
 import { useAuth } from "../../contexts/authContext/auth";
 import { doSignInWithEmailAndPassword } from "../../firebase/auth";
+import { useNavigate } from 'react-router-dom';
 
 const InitialiseScreen = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    // Initialize navigate hook
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,6 +22,12 @@ const InitialiseScreen = () => {
             console.log("Sign-in error:", error);
         }
     };
+
+    const handleRegisterClick = (e) => {
+        e.preventDefault(); // Prevent default link behavior
+        navigate('/register');
+    };
+    
 
     return (
         <div
@@ -69,7 +79,7 @@ const InitialiseScreen = () => {
 
                     <div className="text-center mt-6">
                         <p>
-                            Don't Have An Account? <a href="#" className="text-blue-500 hover:underline">Register</a>
+                            Don't Have An Account? <a href="#" onClick={handleRegisterClick} className="text-blue-500 hover:underline">Register</a>
                         </p>
                     </div>
                 </form>

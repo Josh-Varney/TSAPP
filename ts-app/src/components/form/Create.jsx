@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import backgroundImage from '../assets/mountain.jpg'; 
-import { doSignUpWithEmailAndPassword } from "../../firebase/auth"; // Update import
+
 
 const CreateAccountScreen = () => {
     const [email, setEmail] = useState(""); // Use email instead of username
@@ -12,17 +12,15 @@ const CreateAccountScreen = () => {
         e.preventDefault();
         if (password !== confirmPassword) {
             console.error("Passwords do not match");
-            // Optionally, display an error message to the user
+          
             return;
         }
         try {
             console.log("Attempting to create an account with:", { email, password });
-            await doSignUpWithEmailAndPassword(email, password); // Use sign-up function
             console.log("Account created successfully");
-            navigate('/dashboard'); // Redirect to the desired route
         } catch (error) {
             console.error("Sign-up error:", error);
-            // Optionally, display an error message to the user
+        
         }
     };
 
@@ -80,7 +78,7 @@ const CreateAccountScreen = () => {
 
                     <div className="text-center mt-6">
                         <p>
-                            Already have an account? <a href="/login" className="text-blue-500 hover:underline">Login</a>
+                            Already have an account? <a href="/" className="text-blue-500 hover:underline">Login</a>
                         </p>
                     </div>
                 </form>
