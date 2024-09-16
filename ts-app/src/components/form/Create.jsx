@@ -1,29 +1,48 @@
 import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import backgroundImage from '../assets/mountain.jpg'; 
-
+import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
+import { getAuth } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const CreateAccountScreen = () => {
-    const [email, setEmail] = useState(""); // Use email instead of username
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState(""); // Confirmation password field
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState(""); // Error state
+    const [success, setSuccess] = useState(""); // Success message state
+
+    // Initialize navigate hook
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const auth = getAuth();
+    
         if (password !== confirmPassword) {
-            console.error("Passwords do not match");
-          
+            setError("Passwords do not match");
             return;
         }
+    
         try {
-            console.log("Attempting to create an account with:", { email, password });
-            console.log("Account created successfully");
+            setError(""); // Clear previous errors
+            setSuccess(""); // Clear previous success message
+            // console.log("Attempting to create an account with:", { email, password });
+
+            await doCreateUserWithEmailAndPassword(auth, email, password);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            setSuccess("Account created successfully");
+
+            setTimeout(() => {
+                navigate('/'); // Redirect after a delay
+            }, 2000); // Delay in milliseconds
+
         } catch (error) {
-            console.error("Sign-up error:", error);
-        
+            // console.error("Sign-up error:", error);
+            setError("Sign-up error: " + error.message); // Set error message for UI
         }
     };
-
+    
     return (
         <div
             className="flex items-center justify-center min-h-screen p-4 bg-cover bg-center"
@@ -32,6 +51,9 @@ const CreateAccountScreen = () => {
             <div className="w-full max-w-sm p-6 rounded-lg shadow-md bg-white bg-opacity-90">
                 <form onSubmit={handleSubmit}>
                     <h2 className="text-2xl font-semibold text-center mb-6">Create an Account</h2>
+
+                    {error && <div className="mb-4 text-red-500">{error}</div>} {/* Display error message */}
+                    {success && <div className="mb-4 text-green-500">{success}</div>} {/* Display success message */}
 
                     <div className="flex items-center mb-4 border rounded-full p-2 border-gray-300">
                         <FaUser className="text-gray-600 mr-3" />

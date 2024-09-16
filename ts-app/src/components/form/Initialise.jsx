@@ -1,33 +1,44 @@
 import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import backgroundImage from '../assets/mountain.jpg'; 
-import { useAuth } from "../../contexts/authContext/auth";
 import { doSignInWithEmailAndPassword } from "../../firebase/auth";
 import { useNavigate } from 'react-router-dom';
+import { getAuth } from "firebase/auth";
 
 const InitialiseScreen = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState(""); // Error state
+    const [success, setSuccess] = useState(""); // Success message state
+
 
     // Initialize navigate hook
     const navigate = useNavigate();
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const auth = getAuth();
+
         try {
-            console.log("Attempting to sign in with:", { username, password });
-            await doSignInWithEmailAndPassword(username, password);
-            console.log("Logged")
+            setError(""); // Clear previous errors
+            setSuccess(""); // Clear previous success message
+
+            // console.log("Attempting to sign in with:", { username, password });
+            await doSignInWithEmailAndPassword(auth, username, password);
+            setSuccess("Account successfully logged in");
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            
+            setTimeout(() => {
+                navigate('/home'); // Redirect after a delay
+            }, 2000); // Delay in milliseconds
+
+            // console.log("Logged");
         } catch (error) {
-            console.log("Sign-in error:", error);
+            // console.log("Sign-in error:", error);
+            setError("Sign-up error: " + error.message); // Set error message for UI
         }
     };
-
-    const handleRegisterClick = (e) => {
-        e.preventDefault(); // Prevent default link behavior
-        navigate('/register');
-    };
-    
 
     return (
         <div
@@ -37,6 +48,9 @@ const InitialiseScreen = () => {
             <div className="w-full max-w-sm p-6 rounded-lg shadow-md bg-white bg-opacity-90">
                 <form onSubmit={handleSubmit}>
                     <h2 className="text-2xl font-semibold text-center mb-6">Login Form</h2>
+
+                    {error && <div className="mb-4 text-red-500">{error}</div>} {/* Display error message */}
+                    {success && <div className="mb-4 text-green-500">{success}</div>} {/* Display success message */}
 
                     <div className="flex items-center mb-4 border rounded-full p-2 border-gray-300">
                         <FaUser className="text-gray-600 mr-3" />
@@ -67,7 +81,8 @@ const InitialiseScreen = () => {
                             <input type="checkbox" className="mr-2" />
                             Remember Me
                         </label>
-                        <a href="#" className="text-blue-500 hover:underline">Forgot Password?</a>
+                        {/* Need to change */}
+                        <a href="javascript:void(0)" className="text-blue-500 hover:underline">Forgot Password?</a>
                     </div>
 
                     <button
@@ -79,7 +94,7 @@ const InitialiseScreen = () => {
 
                     <div className="text-center mt-6">
                         <p>
-                            Don't Have An Account? <a href="#" onClick={handleRegisterClick} className="text-blue-500 hover:underline">Register</a>
+                            Don't Have An Account? <a href="/register" className="text-blue-500 hover:underline">Register</a>
                         </p>
                     </div>
                 </form>
