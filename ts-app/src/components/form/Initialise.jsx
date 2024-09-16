@@ -4,6 +4,8 @@ import backgroundImage from '../assets/mountain.jpg';
 import { doSignInWithEmailAndPassword } from "../../firebase/auth";
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from "firebase/auth";
+import GoogleProvider from "../provider/google/googleProvider";
+import FacebookProvider from "../provider/google/facebookProvider";
 
 const InitialiseScreen = () => {
     const [username, setUsername] = useState("");
@@ -82,6 +84,11 @@ const InitialiseScreen = () => {
                             Remember Me
                         </label>
                         <a href="/forgot" className="text-blue-500 hover:underline">Forgot Password?</a>
+                    </div>
+
+                    <div className="flex flex-row justify-center space-x-10">
+                        <GoogleProvider />
+                        <FacebookProvider />
                     </div>
 
                     <button

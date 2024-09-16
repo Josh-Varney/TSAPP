@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { FaUser } from "react-icons/fa";
 import backgroundImage from '../assets/mountain.jpg'; 
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { doPasswordReset } from "../../firebase/auth";
 
 const ForgotPasswordScreen = () => {
     const [email, setEmail] = useState("");
@@ -21,7 +22,7 @@ const ForgotPasswordScreen = () => {
             setSuccess(""); // Clear previous success message
             
             // Send password reset email
-            await sendPasswordResetEmail(auth, email);
+            await doPasswordReset(auth, email);
             setSuccess("Password reset email sent successfully. Please check your inbox.");
 
             setTimeout(() => {
