@@ -15,7 +15,7 @@ const GoogleProvider = () => {
         try {
             await doSignInWithGoogle(auth);
             await new Promise((resolve) => setTimeout(resolve, 1000));
-        //     console.log("Logged");
+            navigate("/home");
         } catch (error) {
             console.log("Sign-in error:", error);
         }

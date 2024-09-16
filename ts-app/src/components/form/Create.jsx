@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import backgroundImage from '../assets/mountain.jpg'; 
-import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
+import { doCreateUserWithEmailAndPassword, doSendEmailVerification } from "../../firebase/auth";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -28,8 +28,13 @@ const CreateAccountScreen = () => {
             setError(""); // Clear previous errors
             setSuccess(""); // Clear previous success message
             // console.log("Attempting to create an account with:", { email, password });
+            const userCredentials = await doCreateUserWithEmailAndPassword(auth, email, password);
+            const user = userCredentials.user;
 
-            await doCreateUserWithEmailAndPassword(auth, email, password);
+            await doSendEmailVerification();
+
+            console.log(user.emailVerified);
+
             await new Promise((resolve) => setTimeout(resolve, 1000));
             setSuccess("Account created successfully");
 
@@ -98,7 +103,7 @@ const CreateAccountScreen = () => {
                         Create Account
                     </button>
 
-                    <div className="text-center mt-6">
+                    <div className="font-medium text-sm text-gray-500 text-center mt-6">
                         <p>
                             Already have an account? <a href="/" className="text-blue-500 hover:underline">Login</a>
                         </p>

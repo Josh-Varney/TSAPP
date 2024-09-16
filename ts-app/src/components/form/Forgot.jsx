@@ -27,7 +27,7 @@ const ForgotPasswordScreen = () => {
 
             setTimeout(() => {
                 navigate('/'); // Redirect after a delay
-            }, 2000); // Delay in milliseconds
+            }, 4000); // Delay in milliseconds
 
         } catch (error) {
             setError("Error sending password reset email: " + error.message); // Set error message for UI
@@ -65,7 +65,7 @@ const ForgotPasswordScreen = () => {
                         Send Reset Email
                     </button>
 
-                    <div className="text-center mt-6">
+                    <div className="text-center font-medium text-sm text-gray-500 mt-6">
                         <p>
                             Remembered your password? <a href="/" className="text-blue-500 hover:underline">Login</a>
                         </p>
