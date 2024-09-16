@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import backgroundImage from '../assets/mountain.jpg'; 
 import { doCreateUserWithEmailAndPassword, doSendEmailVerification } from "../../firebase/auth";
-import { getAuth } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 const CreateAccountScreen = () => {
@@ -14,6 +14,25 @@ const CreateAccountScreen = () => {
 
     // Initialize navigate hook
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const checkAuthStatus = async () => {
+            const auth = getAuth();
+            const user = auth.currentUser;
+            if (user) {
+                // If user is logged in, log them out
+                try {
+                    await signOut(auth);
+                } catch (error) {
+                    console.error("Error signing out: ", error);
+                    setError("Error signing out. Please try again.");
+                }
+            }
+        };
+
+        checkAuthStatus();
+    }, [navigate]);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
