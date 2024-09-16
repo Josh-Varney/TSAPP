@@ -3,6 +3,7 @@ import './App.css';
 import InitialiseScreen from './components/form/Initialise';
 import CreateAccountScreen from './components/form/Create';
 import HomeScreen from './components/homescreen/home';
+import ForgotPasswordScreen from './components/form/Forgot';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<InitialiseScreen />} />
         <Route path="/register" element={<CreateAccountScreen />} />
         <Route path='/home' element={<HomeScreen /> } />
+        <Route path='/forgot' element={<ForgotPasswordScreen />} />
       </Routes>
     </Router>
   );

@@ -81,8 +81,7 @@ const InitialiseScreen = () => {
                             <input type="checkbox" className="mr-2" />
                             Remember Me
                         </label>
-                        {/* Need to change */}
-                        <a href="javascript:void(0)" className="text-blue-500 hover:underline">Forgot Password?</a>
+                        <a href="/forgot" className="text-blue-500 hover:underline">Forgot Password?</a>
                     </div>
 
                     <button
