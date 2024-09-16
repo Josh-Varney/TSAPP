@@ -27,7 +27,7 @@ const ForgotPasswordScreen = () => {
 
             setTimeout(() => {
                 navigate('/'); // Redirect after a delay
-            }, 4000); // Delay in milliseconds
+            }, 400); // Delay in milliseconds
 
         } catch (error) {
             setError("Error sending password reset email: " + error.message); // Set error message for UI
@@ -46,7 +46,7 @@ const ForgotPasswordScreen = () => {
                     {error && <div className="mb-4 text-red-500">{error}</div>} {/* Display error message */}
                     {success && <div className="mb-4 text-green-500">{success}</div>} {/* Display success message */}
 
-                    <div className="flex items-center mb-4 border rounded-full p-2 border-gray-300">
+                    <div className="flex font-medium text-sm items-center mb-4 border rounded-full p-2 border-gray-300">
                         <FaUser className="text-gray-600 mr-3" />
                         <input
                             type="email"
@@ -65,7 +65,7 @@ const ForgotPasswordScreen = () => {
                         Send Reset Email
                     </button>
 
-                    <div className="text-center font-medium text-sm text-gray-500 mt-6">
+                    <div className="text-center font-medium text-xs text-gray-500 mt-6">
                         <p>
                             Remembered your password? <a href="/" className="text-blue-500 hover:underline">Login</a>
                         </p>

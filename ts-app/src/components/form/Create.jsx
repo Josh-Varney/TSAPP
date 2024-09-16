@@ -60,7 +60,7 @@ const CreateAccountScreen = () => {
                     {error && <div className="mb-4 text-red-500">{error}</div>} {/* Display error message */}
                     {success && <div className="mb-4 text-green-500">{success}</div>} {/* Display success message */}
 
-                    <div className="flex items-center mb-4 border rounded-full p-2 border-gray-300">
+                    <div className="flex items-center font-medium text-sm mb-4 border rounded-full p-2 border-gray-300">
                         <FaUser className="text-gray-600 mr-3" />
                         <input
                             type="email"
@@ -72,7 +72,7 @@ const CreateAccountScreen = () => {
                         />
                     </div>
 
-                    <div className="flex items-center mb-4 border rounded-full p-2 border-gray-300">
+                    <div className="flex items-center font-medium text-sm mb-4 border rounded-full p-2 border-gray-300">
                         <FaLock className="text-gray-600 mr-3" />
                         <input
                             type="password"
@@ -84,7 +84,7 @@ const CreateAccountScreen = () => {
                         />
                     </div>
 
-                    <div className="flex items-center mb-6 border rounded-full p-2 border-gray-300">
+                    <div className="flex items-center font-medium text-sm mb-6 border rounded-full p-2 border-gray-300">
                         <FaLock className="text-gray-600 mr-3" />
                         <input
                             type="password"
@@ -103,7 +103,7 @@ const CreateAccountScreen = () => {
                         Create Account
                     </button>
 
-                    <div className="font-medium text-sm text-gray-500 text-center mt-6">
+                    <div className="font-medium text-xs text-gray-500 text-center mt-6">
                         <p>
                             Already have an account? <a href="/" className="text-blue-500 hover:underline">Login</a>
                         </p>

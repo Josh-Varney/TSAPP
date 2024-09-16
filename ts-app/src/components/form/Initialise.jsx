@@ -98,7 +98,7 @@ const InitialiseScreen = () => {
                     
                     {success && <div className="flex flex-row mb-4 text-green-500 text-sm justify-center">{success}</div>} {/* Display success message */}
 
-                    <div className="flex items-center mb-4 border rounded-full p-2 border-gray-300">
+                    <div className="flex items-center font-medium text-sm mb-4 border rounded-full p-2 border-gray-300">
                         <FaUser className="text-gray-600 mr-3" />
                         <input
                             type="text"
@@ -110,7 +110,7 @@ const InitialiseScreen = () => {
                         />
                     </div>
 
-                    <div className="flex items-center mb-6 border rounded-full p-2 border-gray-300">
+                    <div className="flex items-center font-medium text-sm mb-6 border rounded-full p-2 border-gray-300">
                         <FaLock className="text-gray-600 mr-3" />
                         <input
                             type="password"
@@ -122,12 +122,12 @@ const InitialiseScreen = () => {
                         />
                     </div>
 
-                    <div className="flex items-center font-medium text-sm text-gray-500 justify-between mb-6">
+                    <div className="flex items-center font-medium text-xs text-gray-500 justify-between mb-6">
                         <label className="flex items-center">
                             <input type="checkbox" className="mr-2" />
                             Remember Me
                         </label>
-                        <a href="/forgot" className="text-blue-500 font-medium text-sm hover:underline">Forgot Password?</a>
+                        <a href="/forgot" className="text-blue-500 font-medium text-xs hover:underline">Forgot Password?</a>
                     </div>
 
                     <div>
@@ -150,7 +150,7 @@ const InitialiseScreen = () => {
                         Login
                     </button>
 
-                    <div className="text-center font-medium text-sm text-gray-500 mt-6">
+                    <div className="text-center text-xs font-medium text-gray-500 mt-6">
                         <p>
                             Don't Have An Account? <a href="/register" className="text-blue-500 hover:underline">Register</a>
                         </p>
