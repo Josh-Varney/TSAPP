@@ -1,47 +1,44 @@
-import React from 'react';
-import { useContext, useEffect, useState } from "react";
-import { auth } from "../../firebase/firebase"
-import { onAuthStateChanged } from "firebase/auth";
-import { initializeAnalytics } from "firebase/analytics";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { auth } from '../../firebase/firebase'; // Ensure correct import path
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
-const AuthContext = React.createContext();
+const AuthContext = createContext();
 
-export function useAuth(){
+export function useAuth() {
     return useContext(AuthContext);
 }
 
-export function AuthProvider({ children }){
+export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
-    const [userLoggedIn, setUserLoggedIn] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    useEffect(()=>{
-        const unsubscribe = onAuthStateChanged(auth, initializeUser);
-        return unsubscribe;
-    }, [])
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, user => {
+            setCurrentUser(user);
+            setLoading(false);
+        });
 
-    async function initializeUser(user){
-        if (user){
-            setCurrentUser({ ...user });
-            setUserLoggedIn(true);
-        } else {
-            setCurrentUser(null);
-            setUserLoggedIn(false);
+        return () => unsubscribe(); // Clean up subscription on unmount
+    }, []);
+
+    const logout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Logout Error:", error);
         }
-        setLoading(false);
-    }
+    };
 
     const value = {
         currentUser,
-        userLoggedIn,
-        loading
-    }
+        userLoggedIn: !!currentUser, // userLoggedIn is derived from currentUser
+        loading,
+        logout, // Provide logout function
+    };
 
     return (
-       <AuthContext.Provider value={value}>
-        {!loading && children}
-       </AuthContext.Provider> 
-    )
-}   
-
-
+        <AuthContext.Provider value={value}>
+            {!loading && children}
+        </AuthContext.Provider>
+    );
+}
