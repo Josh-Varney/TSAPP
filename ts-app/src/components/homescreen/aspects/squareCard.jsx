@@ -1,8 +1,15 @@
 import React from 'react';
 
 const Card = ({ backgroundImage, headerText, textArea, spanText, icon: Icon, link }) => {
+  const handleClick = () => {
+    window.location.href = link;
+  };
+
   return (
-    <a href={link} target="_blank" rel="noopener noreferrer" className="p-20 w-1/3 rounded overflow-hidden justify-items-center shadow-lg hover:shadow-2xl">
+    <div
+      onClick={handleClick}
+      className="p-20 w-1/3 rounded overflow-hidden justify-items-center shadow-lg hover:shadow-2xl cursor-pointer"
+    >
       <div className="relative w-full">
         <img className="w-full h-auto" src={backgroundImage} alt="Background" />
         <div className="absolute bottom-4 left-0 flex items-center justify-center w-20 h-20 bg-gray-200 border border-gray-300 rounded ml-10">
@@ -22,7 +29,7 @@ const Card = ({ backgroundImage, headerText, textArea, spanText, icon: Icon, lin
           </span>
         )}
       </div>
-    </a>
+    </div>
   );
 }
 

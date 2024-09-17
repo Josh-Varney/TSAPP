@@ -48,19 +48,6 @@ const FlipCard = ({
                 <p className="text-sm">Availability</p>
               </div>
             </div>
-            {/* Qualifications Section
-            <div className="mt-6 flex flex-wrap justify-center gap-2">
-              {gsceStatus && (
-                <span className="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">
-                  {gsceStatus}
-                </span>
-              )}
-              {aLevelStatus && (
-                <span className="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">
-                  {aLevelStatus}
-                </span>
-              )}
-            </div> */}
           </div>
         </div>
 
@@ -68,6 +55,7 @@ const FlipCard = ({
         <div className="flip-card-back flex items-center justify-center">
           <div className="text-center">
             <p className="text-xl font-bold">BACK</p>
+             {/* This is where the booking system is attached*/}
             <p>Leave Me</p>
           </div>
         </div>

@@ -55,7 +55,7 @@ const HomeNavbar = () => {
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
                   <div>
-                    <MenuButton className="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-gray-800 focus:ring-offset-2">
+                    <MenuButton className="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-gray-800 focus:ring-offset-2 transition-transform transform hover:scale-110 shadow-lg hover:shadow-xl">
                       <span className="sr-only">Open user menu</span>
                       <img
                         alt="User avatar"

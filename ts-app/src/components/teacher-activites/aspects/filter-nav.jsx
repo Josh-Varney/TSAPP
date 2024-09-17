@@ -1,17 +1,14 @@
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
+import { Disclosure, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { RiListUnordered } from "react-icons/ri";
 import { IoIosReturnLeft } from "react-icons/io"
-
-const navigation = [
-  { name: 'Filter', href: '/home', current: true },
-  { name: 'Calendar', href: '/calender', current: false },
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+import { FcCalendar } from "react-icons/fc";
 
 const Nav = () => {
+
+  const handleReturn = () => {
+    window.location.href = "/home";
+  };
+
   return (
     <Disclosure as="nav" className="bg-white shadow">
       {({ open }) => (
@@ -20,14 +17,19 @@ const Nav = () => {
             <div className="relative flex h-16 items-center justify-between">
               {/* Mobile menu button */}
                 <div className="flex flex-1 space-x-10 items-center justify-center sm:items-stretch sm:justify-start">
-                  <div className='flex flex-row p-2 rounded-3xl border hover:shadow-lg'>
+                  <div onClick={handleReturn} className='flex flex-row p-2 rounded-3xl border transition-transform transform hover:scale-110 shadow-lg hover:shadow-xl'>
                     <div className="flex flex-shrink-0 items-center">
                         {<IoIosReturnLeft className="w-auto h-6"/>}
                     </div>
                   </div>
-                  <div className='flex flex-row p-2 rounded-3xl border hover:shadow-lg'>
+                  <div className='flex flex-row p-2 rounded-3xl border transition-transform transform hover:scale-110 shadow-lg hover:shadow-xl'>
                     <div className="flex flex-shrink-0 items-center">
                         {<RiListUnordered className="w-auto h-6"/>}
+                    </div>
+                  </div>
+                  <div className='flex flex-row p-2 rounded-3xl border transition-transform transform hover:scale-110 shadow-lg hover:shadow-xl'>
+                    <div className="flex flex-shrink-0 items-center">
+                        {<FcCalendar className="w-auto h-6"/>}
                     </div>
                   </div>
                   <div className="flex flex-shrink-0 items-center">
@@ -41,7 +43,7 @@ const Nav = () => {
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
                   <div>
-                    <MenuButton className="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-gray-800 focus:ring-offset-2">
+                    <MenuButton className="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-gray-800 focus:ring-offset-2 transition-transform transform hover:scale-110 shadow-lg hover:shadow-xl">
                       <span className="sr-only">Open user menu</span>
                       <img
                         alt="User avatar"
