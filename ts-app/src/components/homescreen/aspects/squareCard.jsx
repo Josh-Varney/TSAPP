@@ -1,17 +1,16 @@
 import React from 'react';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
-// Card component
-const Card = ({ backgroundImage, headerImage, textArea, spanText, subImage }) => {
+const Card = ({ backgroundImage, headerText, textArea, spanText, icon, link }) => {
   return (
-    <div className="p-20 w-1/3 rounded overflow-hidden justify-items-center shadow-lg">
-      <img className="w-full" src={backgroundImage} alt="Background" />
-      {headerImage && <img className="w-full mt-4" src={headerImage} alt="Header" />}
-      <div className="flex items-center justify-center w-16 h-16 bg-gray-200 border border-gray-300 rounded mt-4">
-        <MagnifyingGlassIcon className="w-8 h-8 text-gray-700" />
+    <a href={link} target="_blank" rel="noopener noreferrer" className="p-20 w-1/3 rounded overflow-hidden justify-items-center shadow-lg hover:shadow-2xl">
+      <div className="relative w-full">
+        <img className="w-full h-auto" src={backgroundImage} alt="Background" />
+        <div className="absolute bottom-4 left-0 flex items-center justify-center w-20 h-20 bg-gray-200 border border-gray-300 rounded ml-10">
+          {icon}
+        </div>
       </div>
       <div className="px-6 py-4">
-        <div className="font-bold text-xl mb-2">Header Text</div>
+        <div className="font-bold text-xl mb-2">{headerText}</div>
         <p className="text-gray-700 text-base">
           {textArea}
         </p>
@@ -22,9 +21,8 @@ const Card = ({ backgroundImage, headerImage, textArea, spanText, subImage }) =>
             {spanText}
           </span>
         )}
-        {subImage && <img className="w-full mt-4" src={subImage} alt="Sub" />}
       </div>
-    </div>
+    </a>
   );
 }
 
