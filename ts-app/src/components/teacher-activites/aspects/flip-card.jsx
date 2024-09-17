@@ -1,17 +1,24 @@
 import React from "react";
 import "./flip-card.css"; // Ensure this file has your CSS
 
+// const teachingLevels = [
+//     { subject: 'GCSE', color: 'bg-yellow-500', darkColor: 'bg-yellow-600' },
+//     { subject: 'A-Level', color: 'bg-purple-500', darkColor: 'bg-purple-600' },
+//     // Add more subjects and colors as needed
+// ];
+
 const FlipCard = ({
   bgPicture,
   profilePicture,
   professionalStatus,
   bio,
-  gsceStatus,
-  aLevelStatus,
   fullName,
   lessonsTaught,
   teacherRating,
   teacherAvailability,
+  teachesGCSE,
+  teachesALevel,
+  teachingLevels,
 }) => {
   return (
     <div className="flip-card">
@@ -52,13 +59,72 @@ const FlipCard = ({
         </div>
 
         {/* Back Side */}
-        <div className="flip-card-back flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-xl font-bold">BACK</p>
-             {/* This is where the booking system is attached*/}
-            <p>Leave Me</p>
-          </div>
+        <div className="flip-card-back flex flex-col items-center text-center p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg">
+            <div className="w-full justify-center justify-items-center">
+                {/* Bio Section */}
+                <h3 className="text-lg font-semibold text-gray-900">Subjects:</h3>
+                <div className="flex flex-row gap-2 mt-2 justify-center">
+                    {teachingLevels && teachingLevels.map((level, index) => (
+                        <span
+                            key={index}
+                            className={`${level.color} text-white px-3 py-1 rounded-lg text-sm font-medium dark:${level.darkColor}`}
+                        >
+                            {level.subject}
+                        </span>
+                    ))}
+                </div>
+                
+                {/* Teaching Levels */}
+                <div className="dark:bg-gray-700 rounded-lg p-2 mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900">Teaching Levels:</h3>
+                    <div className="flex flex-row gap-2 mt-2 justify-center">
+                        {teachesGCSE && (
+                            <span className="bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm font-medium dark:bg-yellow-600">
+                                GCSE
+                            </span>
+                        )}
+                        {teachesALevel && (
+                            <span className="bg-purple-500 text-white px-3 py-1 rounded-lg text-sm font-medium dark:bg-purple-600">
+                                A-Level
+                            </span>
+                        )}
+                    </div>
+                </div>
+
+                {/* Exam Boards Section */}
+                <div className="dark:bg-gray-700 rounded-lg p-4 mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900">Experienced with these Exam Boards:</h3>
+                    <div className="flex flex-row justify-center gap-2 mt-2">
+                        <span className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm font-medium dark:bg-blue-600">AQA</span>
+                        <span className="bg-green-500 text-white px-3 py-1 rounded-lg text-sm font-medium dark:bg-green-600">Edexcel</span>
+                        <span className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-medium dark:bg-red-600">OCR</span>
+                        <span className="bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-medium dark:bg-orange-600">Eduqas</span>
+                        {/* Add more exam boards as needed */}
+                    </div>
+                </div>
+
+                {/* Reviews Link */}
+                <div className="dark:bg-gray-700 rounded-lg p-4 mb-6 space-x-4">
+                    <a
+                        href="https://example.com/teacher-reviews" // Replace with the actual reviews page link
+                        className="inline-block px-4 py-2 text-blue-600 bg-white border border-blue-600 rounded-lg hover:bg-blue-50 transition duration-300"
+                        target="_blank" // Opens link in a new tab
+                        rel="noopener noreferrer" // Security measure for opening new tabs
+                    >
+                        View Reviews
+                    </a>
+                    <a
+                        href="/teacher-sessions/booking" // Replace with your booking link
+                        className="inline-block px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-300"
+                        target="_blank" // Opens link in a new tab
+                        rel="noopener noreferrer" // Security measure for opening new tabs
+                    >
+                        Book a Lesson
+                    </a>
+                </div>     
+            </div>
         </div>
+
       </div>
     </div>
   );

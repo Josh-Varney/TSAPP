@@ -1,10 +1,12 @@
 import React from "react";
 import ScedulerNav from "../aspects/scheduler-nav";
 
-const schedulerScreen = () => {
+const ScheduleScreen = () => {
     return (
         <div>
             <ScedulerNav />
         </div>
     );
-}
+};
+
+export default ScheduleScreen;

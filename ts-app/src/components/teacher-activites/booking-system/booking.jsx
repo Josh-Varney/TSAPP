@@ -17,8 +17,8 @@ const BookingSystem = () => {
                     lessonsTaught="20"
                     teacherRating="4.8"
                     teacherAvailability="Busy"
-                    gsceStatus="GCSE"
-                    aLevelStatus="A-Level"
+                    teachesALevel={true}
+                    teachesGCSE={true}
                 />
         
             </div>
@@ -30,8 +30,6 @@ const BookingSystem = () => {
                     lessonsTaught="20"
                     teacherRating="4.8"
                     teacherAvailability="Busy"
-                    gsceStatus="GCSE"
-                    aLevelStatus="A-Level"
                 />
                 <FlipCard 
                     professionalStatus="Visual Merchandiser" 
@@ -40,8 +38,6 @@ const BookingSystem = () => {
                     lessonsTaught="20"
                     teacherRating="4.8"
                     teacherAvailability="Busy"
-                    gsceStatus="GCSE"
-                    aLevelStatus="A-Level"
                 />
             </div>
         </div>

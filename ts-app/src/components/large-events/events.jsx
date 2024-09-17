@@ -5,6 +5,7 @@ const EventSystem = () => {
     return (
         <div>
             <HomeNavbar />
+            <h1 className='flex flex-row justify-center justify-items-center'>Coming Soon...</h1>
         </div>
     );
 };
