@@ -57,6 +57,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route 
+        path="/teacher-sessions/booking"
+        element={
+          <ProtectedRoute>
+            
+          </ProtectedRoute>
+        }
+      />
         <Route path="/forgot" element={<ForgotPasswordScreen />} />
       </Routes>
     </Router>
