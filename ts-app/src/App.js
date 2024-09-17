@@ -6,6 +6,10 @@ import CreateAccountScreen from './components/form/Create';
 import HomeScreen from './components/homescreen/home';
 import ForgotPasswordScreen from './components/form/Forgot';
 import ProtectedRoute from './contexts/authContext/route_context'; // Adjust path if needed
+import BookingSystem from './components/teacher-activites/booking-system/booking';
+import GroupBookingSystem from './components/client-group-sessions/group-bookings';
+import CalendarSystem from './components/client-calendar/timetable';
+import EventSystem from './components/large-events/events';
 
 function App() {
   return (
@@ -18,6 +22,38 @@ function App() {
           element={
             <ProtectedRoute>
               <HomeScreen />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher-sessions"
+          element={
+            <ProtectedRoute>
+              <BookingSystem />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/group-sessions"
+          element={
+            <ProtectedRoute>
+              <GroupBookingSystem />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/calender"
+          element={
+            <ProtectedRoute>
+              <CalendarSystem />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/live-events"
+          element={
+            <ProtectedRoute>
+              <EventSystem />
             </ProtectedRoute>
           }
         />

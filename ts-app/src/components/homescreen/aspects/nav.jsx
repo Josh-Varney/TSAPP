@@ -2,10 +2,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
+  { name: 'Dashboard', href: '/home', current: true },
   { name: 'Activity', href: '#', current: false },
   { name: 'Messaging', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
+  { name: 'Calendar', href: '/calender', current: false },
 ];
 
 function classNames(...classes) {

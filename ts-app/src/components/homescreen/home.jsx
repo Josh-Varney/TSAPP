@@ -18,6 +18,7 @@ const HomeScreen = () => {
                     textArea="Let's find an experienced teacher that meet's your requirements"
                     spanText="1-to-1 Lessons"
                     icon={HiMiniMagnifyingGlass}
+                    link="/teacher-sessions"
                 />
                 <Card 
                     backgroundImage="https://via.placeholder.com/600x400"
@@ -25,6 +26,7 @@ const HomeScreen = () => {
                     textArea="Share an experienced professional amongst multiple students"
                     spanText="Up to 2-to-8 Lessons"
                     icon={HiUserGroup}
+                    link="/group-sessions"
                 />
             </div>
             <div className='flex flex-row justify-items-center justify-center mt-10 space-x-10'>
@@ -34,6 +36,7 @@ const HomeScreen = () => {
                     textArea="Stay up-to-date with continuous large group events throughout the year"
                     spanText="Examination Events or Meet Our Team?"
                     icon={MdEmojiEvents}
+                    link="/live-events"
                 />
                 <Card 
                     backgroundImage="https://via.placeholder.com/600x400"
@@ -41,6 +44,7 @@ const HomeScreen = () => {
                     textArea="The busier the schedule the more there is to learn here!"
                     spanText="Let's set and maintain our schedule"
                     icon={PiCalendarBold}
+                    link="/calender"
                 />
             </div>
         </div>
