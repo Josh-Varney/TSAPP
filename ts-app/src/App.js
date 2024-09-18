@@ -10,7 +10,8 @@ import BookingSystem from './components/teacher-activites/booking-system/booking
 import GroupBookingSystem from './components/client-group-sessions/group-bookings';
 import CalendarSystem from './components/client-calendar/timetable';
 import EventSystem from './components/large-events/events';
-import ScheduleScreen from './components/teacher-activites/booking-system/scheduler';
+import ScheduleScreen from './components/client-activities/activity';
+import ScheduleLesson from './components/teacher-activites/booking-system/schedule-booking';
 
 function App() {
   return (
@@ -34,6 +35,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route 
+        path="/booking-activity"
+        element={
+          <ProtectedRoute>
+            <ScheduleScreen />
+          </ProtectedRoute>
+        }
+      />
         <Route
           path="/group-sessions"
           element={
@@ -62,7 +71,7 @@ function App() {
         path="/teacher-sessions/booking"
         element={
           <ProtectedRoute>
-            <ScheduleScreen />
+            <ScheduleLesson />
           </ProtectedRoute>
         }
       />

@@ -1,0 +1,18 @@
+/* src/SchedulerCard.css */
+.scheduler-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .scheduler-card h2 {
+    margin: 0 0 8px;
+  }
+  
+  .scheduler-card p {
+    margin: 4px 0;
+  }
+  
