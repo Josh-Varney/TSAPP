@@ -12,7 +12,7 @@ const FullScreenCard = () => {
   const [slotsAvailable, setSlotsAvailable] = useState(false);
   const [notificationEnabled, setNotificationsEnabled] = useState(false);
   const [openLessonEnabled, setOpenLessonEnabled] = useState(true);
-  const [bookLessonEnabled, setBookLessonEnabled] = useState(true);
+  const [bookLessonEnabled, setBookLessonEnabled] = useState(false);
   
   // Generate time slots from 08:00 to 20:00 (24-hour format)
   const timeSlots = Array.from({ length: 13 }, (_, index) => {
@@ -68,7 +68,7 @@ const FullScreenCard = () => {
           </div>
 
           <div className="flex flex-row justify-between mt-4 items-center">
-            <p className="mb-0 text-gray-600 text-sm">Show available slots only</p>
+            <p className="mb-0 text-gray-600 text-xs">Show available slots only</p>
             <ToggleSwitch />
           </div>
 
@@ -84,13 +84,13 @@ const FullScreenCard = () => {
             {!openLessonEnabled ? (
               <div>
                 <p className="text-gray-600 font-semibold">Book a place in an Open lesson</p>
-                <p className="text-gray-600">There aren't any Open Lessons available at this time. Try another time. ⏰</p>
+                <p className="text-gray-600 text-xs">Sign up for an Open Lesson, learn with others, and meet new people. <a className='text-blue-500 font-bold' href='#'>See all lessons.</a></p>
               </div>
             ) : (
               <div>
                 <p className="text-gray-800 font-semibold">Book a place in an Open lesson</p>
                 <p className="text-gray-600 text-xs">Sign up for an Open Lesson, learn with others, and meet new people. <a className='text-blue-500 font-bold' href='#'>See all lessons.</a></p>
-                <OpenLessonsCarousel />
+                <OpenLessonsCarousel lessonsData={""} />
               </div>
             )}
           </div>
@@ -99,17 +99,17 @@ const FullScreenCard = () => {
             {!bookLessonEnabled ? (
               <div>
                 <p className="text-gray-800 font-semibold">Book a lesson</p>
-                <p className="text-gray-600">There aren't any Lessons available at this time. Try another time. ⏰</p>
+                <p className="text-gray-600 text-xs">There aren't any Lessons available at this time. Try another time. ⏰</p>
 
                 <div className="flex flex-row justify-between mt-4 items-center">
-                  <p className="mb-0 text-gray-600 text-sm">Show available teachers only</p>
+                  <p className="mb-0 text-gray-600 text-xs">Show available teachers only</p>
                   <ToggleSwitch />
                 </div>    
               </div>
             ) : (
               <div>
                 <p className="text-gray-800 font-semibold">Book a lesson</p>
-                <p className="text-gray-600">Create a private lesson for yourself or others.</p>
+                <p className="text-gray-600 text-sm">Create a private lesson for yourself or others.</p>
 
                 <div className="flex flex-row justify-between mt-4 items-center">
                   <p className="mb-0 text-gray-600 text-sm">Show available teachers only</p>
