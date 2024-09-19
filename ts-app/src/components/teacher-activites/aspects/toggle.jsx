@@ -15,8 +15,16 @@ const ToggleSwitch = () => {
         onChange={handleToggle}
         className="sr-only peer"
       />
-      <div className={`relative w-11 h-6 bg-slate-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full transition-colors ${isChecked ? 'bg-blue-600' : 'dark:bg-gray-700'}`}>
-        <div className={`absolute top-[2px] left-[2px] bg-white border border-gray-300 rounded-full h-5 w-5 transition-transform ${isChecked ? 'translate-x-full' : ''}`}></div>
+      {/* Switch background */}
+      <div
+        className={`relative w-11 h-6 rounded-full transition-colors 
+          ${isChecked ? 'bg-blue-600' : 'bg-slate-300'}`}
+      >
+        {/* Toggle button */}
+        <div
+          className={`absolute top-[2px] left-[2px] h-5 w-5 bg-white border border-gray-300 rounded-full transition-transform 
+            ${isChecked ? 'translate-x-full' : ''}`}
+        ></div>
       </div>
     </label>
   );

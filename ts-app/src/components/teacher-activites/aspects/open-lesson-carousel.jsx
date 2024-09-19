@@ -44,18 +44,27 @@ const OpenLessonsCarousel = ({ lessonsData }) => {
                   </div>
                 </div>
                 {/* Description */}
-                <div className='flex flex-row mb-4 text-center justify-center space-x-2'>
-                    <div className='flex flex-row'>
-                        <PiPersonBold className='p-2 border rounded-full w-14 h-14'/>
-                        <PiPersonBold className='p-2 border rounded-full w-14 h-14' />
+                <div className='relative'>
+                    {/* Widget (placed in front of the existing content) */}
+                    <div className='absolute top-3 left-1/2 transform -translate-x-1/2 bg-blue-200 shadow-md p-1 rounded-full z-10 justify-center justify-items-center'>
+                        {/* Widget content */}
+                        <p className='text-sm text-center'>Book the first place</p>
                     </div>
-                    <div className="border-r border-gray-300"></div>
-                    <div className='flex flex-row'>
-                        <PiPersonBold className='p-2 border rounded-full w-14 h-14'/>
-                        <PiPersonBold className='p-2 border rounded-full w-14 h-14'/>
+
+                    {/* Existing content */}
+                    <div className='flex flex-row mb-4 text-center justify-center space-x-2'>
+                        <div className='flex flex-row'>
+                        <PiPersonBold className='p-2 border rounded-full w-14 h-14' />
+                        <PiPersonBold className='p-2 border rounded-full w-14 h-14' />
+                        </div>
+                        <div className="border-r border-gray-300"></div>
+                        <div className='flex flex-row'>
+                        <PiPersonBold className='p-2 border rounded-full w-14 h-14' />
+                        <PiPersonBold className='p-2 border rounded-full w-14 h-14' />
+                        </div>
                     </div>
                 </div>
-                {/* Separator */}
+                                    {/* Separator */}
                 <div className="border-t w-full border-gray-300"></div>
                 {/* Time */}
                 <div className='flex flex-row justify-between'>

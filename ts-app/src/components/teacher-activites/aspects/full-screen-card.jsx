@@ -49,9 +49,9 @@ const FullScreenCard = () => {
     <div className="flex items-center justify-center bg-gray-50">
       {/* Controls the height and width of the screen */}
       <div className="bg-white shadow-md rounded-xl border border-gray-200 w-[700px] items-center mt-8 overflow-auto">  
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800">Joshua Varney</h1>
-          <h2 className="text-sm font-bold text-gray-600">Small Underneath Text</h2>
+        <div className="p-6">
+          <h1 className="text-2xl font-bold text-gray-800">Logo</h1>
+          <h2 className="text-sm font-semibold text-gray-600">Let's cause an impact</h2>
         </div>
 
         <div className="bg-[#f3f4f6] p-4 rounded-lg shadow-lg">

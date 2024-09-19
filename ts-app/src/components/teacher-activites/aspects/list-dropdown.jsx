@@ -6,8 +6,8 @@ const DropdownList = () => {
   // Sample list of items to display
   const items = [
     { name: 'Joshua Varney', subtitle: 'Subtitle Tags' },
-    { name: 'Joshua Varney', subtitle: 'Subtitle Tags' },
-    { name: 'Joshua Varney', subtitle: 'Subtitle Tags' }
+    { name: 'Daniel Stanley', subtitle: 'Subtitle Tags' },
+    { name: 'John Thompson', subtitle: 'Subtitle Tags' }
   ];
 
   // State to track which item is expanded
@@ -30,8 +30,8 @@ const DropdownList = () => {
           <ul className='mt-3 p-2'>
             <div className='flex flex-row justify-between items-center'>
               <div className='flex flex-col'>
-                <p className='text-sm'>{item.name}</p>
-                <p className='text-sm'>{item.subtitle}</p>
+                <p className='text-sm font-semibold'>{item.name}</p>
+                <p className='text-gray-600 text-xs'>{item.subtitle}</p>
               </div>
               <div onClick={() => toggleExpand(index)} className="cursor-pointer">
                 {expandedIndex === index ? <MdOutlineKeyboardArrowUp /> : <MdOutlineKeyboardArrowDown />}
