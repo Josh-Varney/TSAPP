@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
 
-const Carousel = ({ slideData }) => {
+const TimeCarousel = ({ slideData }) => {
   const [currentSlide, setCurrentSlide] = useState(0); // State to manage current slide
 
   const handleSlideClick = (index) => {
@@ -12,8 +12,8 @@ const Carousel = ({ slideData }) => {
   return (
     <div className="flex flex-row justify-center items-center w-full">
       <CarouselProvider
-        naturalSlideWidth={150}
-        naturalSlideHeight={150}
+        naturalSlideWidth={125}
+        naturalSlideHeight={125}
         totalSlides={slideData.length}
         visibleSlides={5}
         isIntrinsicHeight={true}
@@ -31,9 +31,9 @@ const Carousel = ({ slideData }) => {
                   currentSlide === index ? '' : ''
                 }`}
               >
-                <h1>{slide.day}</h1>
+                <h1 className="font-semibold">{slide.day}</h1>
                 <h1
-                  className={`${
+                  className={`font-bold ${
                     currentSlide === index
                       ? 'rounded-full bg-black text-white px-2 py-1'
                       : ''
@@ -41,7 +41,7 @@ const Carousel = ({ slideData }) => {
                 >
                   {slide.date}
                 </h1>
-                <h1>{slide.month}</h1>
+                <h1 className="font-semibold">{slide.month}</h1>
               </div>
             </Slide>
           ))}
@@ -52,7 +52,7 @@ const Carousel = ({ slideData }) => {
 };
 
 // Default slideData if not provided as prop
-Carousel.defaultProps = {
+TimeCarousel.defaultProps = {
   slideData: [
     { day: 'FRI', date: '19', month: 'Sep' },
     { day: 'SAT', date: '20', month: 'Sep' },
@@ -63,4 +63,4 @@ Carousel.defaultProps = {
   ],
 };
 
-export default Carousel;
+export default TimeCarousel;

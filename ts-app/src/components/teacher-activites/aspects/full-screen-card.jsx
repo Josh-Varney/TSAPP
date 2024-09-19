@@ -3,34 +3,43 @@ import MiniCard from './mini-time-card';
 import TeacherSwapCard from './small-teacher-swap-card';
 import ToggleSwitch from './toggle';
 import GetNotifiedCard from './alert-card';
-import Carousel from './time-carousel';
+import TimeCarousel from './time-carousel';
+import OpenLessonsCarousel from './open-lesson-carousel';
+import DropdownList from './list-dropdown';
 
 const FullScreenCard = () => {
   const [selectedCard, setSelectedCard] = useState(null);
   const [slotsAvailable, setSlotsAvailable] = useState(false);
   const [notificationEnabled, setNotificationsEnabled] = useState(false);
-  const [openLessonEnabled, setOpenLessonEnabled] = useState(false);
+  const [openLessonEnabled, setOpenLessonEnabled] = useState(true);
   const [bookLessonEnabled, setBookLessonEnabled] = useState(true);
   
-  const miniCards = Array.from({ length: 10 }, (_, index) => index);
+  // Generate time slots from 08:00 to 20:00 (24-hour format)
+  const timeSlots = Array.from({ length: 13 }, (_, index) => {
+    const hour = 8 + index;
+    return `${hour.toString().padStart(2, '0')}:00`;
+  });
 
   // Function to render rows of MiniCards
   const renderMiniCardRows = (cards) => {
-    return cards.reduce((rows, _, index) => {
+    const rows = cards.reduce((acc, time, index) => {
       if (index % 5 === 0) {
-        rows.push([]);
+        acc.push([]);
       }
-      rows[rows.length - 1].push(
+      acc[acc.length - 1].push(
         <MiniCard
           key={index}
           id={index}
+          time={time}
           isSelected={selectedCard === index}
           onCardClick={setSelectedCard}
         />
       );
-      return rows;
-    }, []).map((row, rowIndex) => (
-      <div key={rowIndex} className="flex flex-row justify-center space-x-5 mt-4 flex-wrap">
+      return acc;
+    }, []);
+    
+    return rows.map((row, rowIndex) => (
+      <div key={rowIndex} className="flex flex-row justify-center space-x-5 mt-4">
         {row}
       </div>
     ));
@@ -38,24 +47,34 @@ const FullScreenCard = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-50">
-      <div className="bg-white shadow-md rounded-xl space-y-4 border border-gray-200">
-        <div className="text-center p-4">
+      {/* Controls the height and width of the screen */}
+      <div className="bg-white shadow-md rounded-xl border border-gray-200 w-[700px] items-center overflow-auto">  
+        <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-800">Joshua Varney</h1>
-          <h2 className="text-sm font-bold text-gray-800">Small Underneath Text</h2>
+          <h2 className="text-sm font-bold text-gray-600">Small Underneath Text</h2>
         </div>
 
         <div className="bg-[#f3f4f6] p-4 rounded-lg shadow-lg">
-          <div className="flex flex-row space-x-4">
+          <div className="flex flex-row items-center space-x-4">
             <TeacherSwapCard />
-            <Carousel className='flex flex-row'/>
+            <TimeCarousel slideData={[
+              { day: 'FRI', date: '19', month: 'Sep' },
+              { day: 'SAT', date: '20', month: 'Sep' },
+              { day: 'SUN', date: '21', month: 'Sep' },
+              { day: 'MON', date: '22', month: 'Sep' },
+              { day: 'TUE', date: '23', month: 'Sep' },
+              { day: 'WED', date: '24', month: 'Sep' },
+            ]} />
           </div>
 
-          <div className="flex flex-row justify-between mt-4">
-            <p className="mb-0 text-gray-600 text-sm text-center">Show available slots only</p>
+          <div className="flex flex-row justify-between mt-4 items-center">
+            <p className="mb-0 text-gray-600 text-sm">Show available slots only</p>
             <ToggleSwitch />
           </div>
 
-          {renderMiniCardRows(miniCards)}
+          <div className='flex flex-col items-center mt-4'>
+            {renderMiniCardRows(timeSlots)}
+          </div>
 
           <div className="mt-4">
             {!notificationEnabled && <GetNotifiedCard />}
@@ -70,7 +89,8 @@ const FullScreenCard = () => {
             ) : (
               <div>
                 <p className="text-gray-800 font-semibold">Book a place in an Open lesson</p>
-                <p className="text-gray-600">There aren't any Open Lessons available at this time. Try another time. ⏰</p>
+                <p className="text-gray-600 text-xs">Sign up for an Open Lesson, learn with others, and meet new people. <a className='text-blue-500 font-bold' href='#'>See all lessons.</a></p>
+                <OpenLessonsCarousel />
               </div>
             )}
           </div>
@@ -81,25 +101,28 @@ const FullScreenCard = () => {
                 <p className="text-gray-800 font-semibold">Book a lesson</p>
                 <p className="text-gray-600">There aren't any Lessons available at this time. Try another time. ⏰</p>
 
-                <div className="flex flex-row justify-between mt-4">
-                  <p className="mb-0 text-gray-600 text-sm text-center">Show available teachers only</p>
+                <div className="flex flex-row justify-between mt-4 items-center">
+                  <p className="mb-0 text-gray-600 text-sm">Show available teachers only</p>
                   <ToggleSwitch />
                 </div>    
               </div>
             ) : (
               <div>
                 <p className="text-gray-800 font-semibold">Book a lesson</p>
-                <p className="text-gray-600">Create a private lesson for yourself or for others.</p>
+                <p className="text-gray-600">Create a private lesson for yourself or others.</p>
 
-                <div className="flex flex-row justify-between mt-4">
-                  <p className="mb-0 text-gray-600 text-sm text-center">Show available teachers only</p>
+                <div className="flex flex-row justify-between mt-4 items-center">
+                  <p className="mb-0 text-gray-600 text-sm">Show available teachers only</p>
                   <ToggleSwitch />
                 </div>                
               </div>
-
             )}
             {/* Display of available teachers at the time that the user has selected */}
             {/* This could be a dropdown list with teacher options */}
+
+            <div>
+              <DropdownList />
+            </div>
           </div>
         </div>
       </div>
