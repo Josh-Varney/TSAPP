@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md";
+import PrivateLessonCarousel from './private-lesson-carousel';
 
 const DropdownList = () => {
   // Sample list of items to display
@@ -26,7 +27,7 @@ const DropdownList = () => {
       {items.map((item, index) => (
         <div key={index}>
           {/* List item */}
-          <ul className='mt-4 p-3'>
+          <ul className='mt-3 p-2'>
             <div className='flex flex-row justify-between items-center'>
               <div className='flex flex-col'>
                 <p className='text-sm'>{item.name}</p>
@@ -40,13 +41,13 @@ const DropdownList = () => {
 
           {/* Expanded content */}
           {expandedIndex === index && (
-            <div className="mt-2 p-2 bg-gray-100">
-              <p>Additional content for {item.name}</p>
+            <div className="bg-gray-100">
+              <PrivateLessonCarousel />
             </div>
           )}
 
           {/* Separator */}
-          <div className="border-t w-full h-2"></div>
+          <div className="border-t w-full h-4"></div>
         </div>
       ))}
     </div>
