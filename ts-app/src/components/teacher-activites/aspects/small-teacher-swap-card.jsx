@@ -1,11 +1,10 @@
 import React from "react";
+import { BsPersonFillUp } from "react-icons/bs";
 
 const TeacherSwapCard = () => {
     return (
-        <div>
-            <div className="bg-pink-400 rounded-lg h-20 w-14">
-                
-            </div>
+        <div className="bg-pink-400 rounded-lg h-28 w-20 flex items-center justify-center">
+            <BsPersonFillUp  acher className="text-white text-4xl" />
         </div>
     );
 };
