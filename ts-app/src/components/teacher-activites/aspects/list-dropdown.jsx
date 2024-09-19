@@ -1,5 +1,5 @@
-import React from 'react';
-import { MdOutlineKeyboardArrowDown } from "react-icons/md";
+import React, { useState } from 'react';
+import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md";
 
 const DropdownList = () => {
   // Sample list of items to display
@@ -8,6 +8,18 @@ const DropdownList = () => {
     { name: 'Joshua Varney', subtitle: 'Subtitle Tags' },
     { name: 'Joshua Varney', subtitle: 'Subtitle Tags' }
   ];
+
+  // State to track which item is expanded
+  const [expandedIndex, setExpandedIndex] = useState(null);
+
+  // Function to toggle the expanded state
+  const toggleExpand = (index) => {
+    if (expandedIndex === index) {
+      setExpandedIndex(null); // Collapse if already expanded
+    } else {
+      setExpandedIndex(index); // Expand clicked item
+    }
+  };
 
   return (
     <div>
@@ -20,9 +32,19 @@ const DropdownList = () => {
                 <p className='text-sm'>{item.name}</p>
                 <p className='text-sm'>{item.subtitle}</p>
               </div>
-              <MdOutlineKeyboardArrowDown />
+              <div onClick={() => toggleExpand(index)} className="cursor-pointer">
+                {expandedIndex === index ? <MdOutlineKeyboardArrowUp /> : <MdOutlineKeyboardArrowDown />}
+              </div>
             </div>
           </ul>
+
+          {/* Expanded content */}
+          {expandedIndex === index && (
+            <div className="mt-2 p-2 bg-gray-100">
+              <p>Additional content for {item.name}</p>
+            </div>
+          )}
+
           {/* Separator */}
           <div className="border-t w-full h-2"></div>
         </div>
