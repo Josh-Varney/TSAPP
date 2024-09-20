@@ -24,7 +24,7 @@ const events = [
   ];
 
 
-const ScheduleScreen = () => {
+const ActivityScreen = () => {
     return (
         <div className="">
             <div>
@@ -46,4 +46,4 @@ const ScheduleScreen = () => {
     );
 };
 
-export default ScheduleScreen;
+export default ActivityScreen;

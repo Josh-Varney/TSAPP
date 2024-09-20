@@ -3,9 +3,8 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 
 const navigation = [
   { name: 'Dashboard', href: '/home', current: true },
-  { name: 'Activity', href: '#', current: false },
-  { name: 'Messaging', href: '#', current: false },
-  { name: 'Calendar', href: '/calender', current: false },
+  { name: 'Activity', href: '/booking-activity', current: false },
+  { name: 'Messaging', href: '/messaging', current: false },
 ];
 
 function classNames(...classes) {

@@ -7,11 +7,11 @@ import HomeScreen from './components/homescreen/home';
 import ForgotPasswordScreen from './components/form/Forgot';
 import ProtectedRoute from './contexts/authContext/route_context'; // Adjust path if needed
 import BookingSystem from './components/teacher-activites/booking-system/booking';
-import GroupBookingSystem from './components/client-group-sessions/group-bookings';
 import CalendarSystem from './components/client-calendar/timetable';
 import EventSystem from './components/large-events/events';
-import ScheduleScreen from './components/client-activities/activity';
+import ScheduleScreen from './components/calender-activities/activity';
 import ScheduleLesson from './components/teacher-activites/booking-system/schedule-booking';
+import MessagingScreen from './components/client-messaging/messaging-screen';
 
 function App() {
   return (
@@ -44,18 +44,10 @@ function App() {
         }
       />
         <Route
-          path="/group-sessions"
+          path="/messaging"
           element={
             <ProtectedRoute>
-              <GroupBookingSystem />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/calender"
-          element={
-            <ProtectedRoute>
-              <CalendarSystem />
+              <MessagingScreen />
             </ProtectedRoute>
           }
         />

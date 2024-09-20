@@ -26,7 +26,7 @@ const HomeScreen = () => {
                     textArea="Share an experienced professional amongst multiple students"
                     spanText="Up to 2-to-8 Lessons"
                     icon={HiUserGroup}
-                    link="/group-sessions"
+                    link="/teacher-sessions"
                 />
             </div>
             <div className='flex flex-row justify-items-center justify-center mt-10 space-x-10'>
@@ -40,7 +40,7 @@ const HomeScreen = () => {
                 />
                 <Card 
                     backgroundImage="https://via.placeholder.com/600x400"
-                    headerText="Check your Timetable"
+                    headerText="Check your Schedule"
                     textArea="The busier the schedule the more there is to learn here!"
                     spanText="Let's set and maintain our schedule"
                     icon={PiCalendarBold}

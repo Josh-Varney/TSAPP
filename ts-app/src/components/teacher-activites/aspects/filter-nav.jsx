@@ -9,6 +9,10 @@ const Nav = () => {
     window.location.href = "/home";
   };
 
+  const handleCalender = () => {
+    window.location.href = "/booking-activity"
+  }
+
   return (
     <Disclosure as="nav" className="bg-white shadow">
       {({ open }) => (
@@ -23,12 +27,7 @@ const Nav = () => {
                     </div>
                   </div>
                   <div className='flex flex-row p-2 rounded-3xl border transition-transform transform hover:scale-110 shadow-lg hover:shadow-xl'>
-                    <div className="flex flex-shrink-0 items-center">
-                        {<RiListUnordered className="w-auto h-6"/>}
-                    </div>
-                  </div>
-                  <div className='flex flex-row p-2 rounded-3xl border transition-transform transform hover:scale-110 shadow-lg hover:shadow-xl'>
-                    <div className="flex flex-shrink-0 items-center">
+                    <div onClick={handleCalender} className="flex flex-shrink-0 items-center">
                         {<FcCalendar className="w-auto h-6"/>}
                     </div>
                   </div>
