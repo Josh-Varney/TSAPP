@@ -2,14 +2,14 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { RiListUnordered } from "react-icons/ri";
 import { IoIosReturnLeft } from "react-icons/io"
 
-const navigation = [
-  { name: 'Filter', href: '/home', current: true },
-  { name: 'Calendar', href: '/calender', current: false },
-];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
+
+const handleReturn = () => {
+  window.location.href = "/home";
+};
 
 const ScedulerNav = () => {
   return (
@@ -20,14 +20,9 @@ const ScedulerNav = () => {
             <div className="relative flex h-16 items-center justify-between">
               {/* Mobile menu button */}
                 <div className="flex flex-1 space-x-10 items-center justify-center sm:items-stretch sm:justify-start">
-                  <div className='flex flex-row p-2 rounded-3xl border hover:shadow-lg'>
+                  <div onClick={handleReturn} className='flex flex-row p-2 rounded-3xl border hover:shadow-lg'>
                     <div className="flex flex-shrink-0 items-center">
                         {<IoIosReturnLeft className="w-auto h-6"/>}
-                    </div>
-                  </div>
-                  <div className='flex flex-row p-2 rounded-3xl border hover:shadow-lg'>
-                    <div className="flex flex-shrink-0 items-center">
-                        {<RiListUnordered className="w-auto h-6"/>}
                     </div>
                   </div>
                   <div className="flex flex-shrink-0 items-center">
