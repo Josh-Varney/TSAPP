@@ -88,7 +88,7 @@ const EmptyLessonCard = () => (
         </div>
       </div>
       <div className="border-t w-full border-gray-300"></div>
-      <div className="flex flex-row justify-between space-x-12">
+      <div className="flex flex-row justify-between space-x-14">
         <div className="flex flex-row items-center p-3 space-x-2">
           <IoLogoClosedCaptioning />
           <div className="flex flex-col">
