@@ -30,9 +30,9 @@ const PrivateLessonCarousel = ({ lessonsData }) => {
               onClick={() => handleSlideClick(index)} // Handle click event
               className="flex justify-center" // Center the card in the slide
             >
-              <div className='shadow-lg rounded-lg w-[150px] h-[80px] flex flex-col text-center justify-center bg-blue-500/40 mx-2 p-2'>
-                <p className='font-bold text-lg'>{lesson.title}</p>
-                <p className='mt-2'>{lesson.description}</p>
+              <div className='shadow-lg rounded-lg w-[150px] h-[80px] flex flex-col text-center justify-center bg-blue-600/60 mx-2'>
+                <p className='font-bold text-lg text-white'>{lesson.title}</p>
+                <p className='text-xs text-white'>{lesson.description}</p>
               </div>
             </Slide>
           ))}

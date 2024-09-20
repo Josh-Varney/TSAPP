@@ -90,7 +90,7 @@ const FullScreenCard = () => {
               <div>
                 <p className="text-gray-800 font-semibold">Book a place in an Open lesson</p>
                 <p className="text-gray-600 text-xs">Sign up for an Open Lesson, learn with others, and meet new people. <a className='text-blue-500 font-bold' href='#'>See all lessons.</a></p>
-                <OpenLessonsCarousel lessonsData={""} />
+                <OpenLessonsCarousel />
               </div>
             )}
           </div>
