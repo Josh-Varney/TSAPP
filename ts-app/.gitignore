@@ -13,6 +13,7 @@
 
 # firebase 
 **/firebase.js
+**/serviceAccountKey.json
 
 # misc
 .DS_Store
