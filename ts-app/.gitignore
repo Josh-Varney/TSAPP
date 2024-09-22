@@ -14,8 +14,8 @@
 # firebase 
 **/firebase.js
 **/serviceAccountKey.json
-**/firebase-scheduler.js
-**/firebase-activity.js
+**/firestore-scheduler.js
+**/firestore-activity.js
 
 # misc
 .DS_Store
