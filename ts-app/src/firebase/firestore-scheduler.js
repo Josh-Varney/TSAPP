@@ -25,6 +25,10 @@ async function getCurrentTime() {
   return `${hours}:${minutes}:${seconds} UTC`;
 }
 
+// async function getTeacherID(teacherName){
+
+// }
+
 // Function to book a lesson for a teacher
 async function bookLessonForTeacher(teacherName, bookingDate, time, userEmail, tutorSubject, tutorDescription) {
   const teacherID = "15"; // Placeholder for teacherID. Modify as needed
@@ -130,13 +134,5 @@ async function deleteBookingForTeacher(teacherID, bookingDate, time) {
   }
 }
 
-
-// Example usage
-const teacherName = "John Doe";
-const bookingDate = "2024-09-21"; // Format: YYYY-MM-DD
-const time = "12:00 AM";
-const userEmail = "student@example.com";
-const tutorSubject = "Mathematics";
-const tutorDescription = "Algebra basics and equations";
-
-bookLessonForTeacher(teacherName, bookingDate, time, userEmail, tutorSubject, tutorDescription);
+// bookLessonForTeacher(teacherName, bookingDate, time, userEmail, tutorSubject, tutorDescription);
+// deleteBookingForTeacher("7", "2024-09-21", "10:00 AM")
