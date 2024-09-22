@@ -88,6 +88,49 @@ async function bookLessonForTeacher(teacherName, bookingDate, time, userEmail, t
   }
 }
 
+async function deleteBookingForTeacher(teacherID, bookingDate, time) {
+  try {
+    // Reference to the document using the booking date
+    const docRef = db.collection('scheduler').doc(bookingDate);
+
+    // Check if the document exists
+    const docSnap = await docRef.get();
+
+    if (docSnap.exists) {
+      // Get the existing schedule
+      const existingSchedule = docSnap.data().schedule || {};
+      const bookingsAtTime = existingSchedule[time] || [];
+
+      // Find the index of the booking to delete
+      const bookingIndex = bookingsAtTime.findIndex(booking => booking.teacherID === teacherID);
+
+      if (bookingIndex === -1) {
+        console.log('No booking found for this teacher at this time.');
+        return; // Exit if no booking is found for the given teacher
+      }
+
+      // Remove the booking from the array
+      bookingsAtTime.splice(bookingIndex, 1);
+
+      // Update the schedule with the modified array
+      await docRef.set({
+        schedule: {
+          [time]: bookingsAtTime.length > 0 ? bookingsAtTime : admin.firestore.FieldValue.delete() // Delete the time slot if empty
+        }
+      }, { merge: true });
+
+      console.log(`Booking for teacher ID ${teacherID} deleted successfully for date ${bookingDate} at time ${time}.`);
+
+    } else {
+      console.log('No bookings found for the specified date.');
+    }
+
+  } catch (error) {
+    console.error("Error deleting the booking:", error);
+  }
+}
+
+
 // Example usage
 const teacherName = "John Doe";
 const bookingDate = "2024-09-21"; // Format: YYYY-MM-DD
