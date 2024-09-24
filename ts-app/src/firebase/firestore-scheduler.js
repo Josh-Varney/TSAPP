@@ -123,3 +123,10 @@ async function deleteBookingForTeacher(teacherID, bookingDate, time) {
 
 // bookLessonForTeacher(teacherName, bookingDate, time, userEmail, tutorSubject, tutorDescription);
 // deleteBookingForTeacher("7", "2024-09-21", "10:00 AM")
+
+module.exports = {
+  bookLessonForTeacher,
+  deleteBookingForTeacher,
+  getCurrentTime,
+  getCurrentDate,
+};

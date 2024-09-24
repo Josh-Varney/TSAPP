@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const serviceAccount = require('./serviceAccountKey.json');
 const fs = require('fs'); // Use require instead of import
+const e = require('express');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -91,3 +92,8 @@ async function obtainTeacherProfile(teacherID){
 }
 
 // obtainTeacherProfile(15);
+
+module.exports = {
+    findTeacherID,
+    obtainTeacherProfile,
+};

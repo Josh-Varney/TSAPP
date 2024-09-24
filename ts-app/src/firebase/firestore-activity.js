@@ -184,3 +184,10 @@ async function getLessonActivity(userEmail) {
 //         console.log("All lessons:", lessons);
 //     }
 // });
+
+module.exports = {
+    removeLesson,
+    logActivity,
+    updateLessonFeedback,
+    getLessonActivity,
+};

@@ -14,7 +14,6 @@
     "autoprefixer": "^10.4.20",
     "express": "^4.21.0",
     "firebase": "^10.13.1",
-    "firebase-admin": "^12.5.0",
     "mongoose": "^8.6.3",
     "node-cron": "^3.0.3",
     "postcss": "^8.4.45",
@@ -35,7 +34,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -57,6 +56,12 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.24.7",
+    "chai": "^5.1.1",
+    "firebase-admin": "^12.5.0",
+    "jest": "^27.5.1",
+    "jest-mock": "^29.7.0",
+    "mocha": "^10.7.3",
     "tailwindcss": "^3.4.11"
   }
 }
