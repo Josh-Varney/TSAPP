@@ -10,11 +10,6 @@ admin.initializeApp({
 // Get Firestore instance
 const db = admin.firestore();
 
-// Mock function to retrieve teacher's name asynchronously
-async function findTeacherName(teacherID) {
-    return "John Cena";  // Replace with actual logic if necessary
-}
-
 // Function to remove a specific lesson for a user by email, bookingDate, and bookingTime
 async function removeLesson(userEmail, bookingDate, bookingTime) {
     try {
@@ -60,12 +55,9 @@ async function removeLesson(userEmail, bookingDate, bookingTime) {
 // Function to log activity into Firestore
 async function logActivity(teacherID, userEmail, bookingDate, bookingTime, bookingLength, tutorSubject, tutorDescription) {
     try {
-        // Await the teacher's name since it's an asynchronous function
-        const teacherName = await findTeacherName(teacherID);
-
         // Construct activity data object
         const activityData = {
-            teacherName: teacherName,
+            teacherID: teacherID,
             lessonSummary: {
                 bookingTime: bookingTime,
                 bookingLength : bookingLength,
