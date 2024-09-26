@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MiniCard from './mini-time-card';
 import TeacherSwapCard from './small-teacher-swap-card';
 import ToggleSwitch from './toggle';
@@ -6,6 +6,7 @@ import GetNotifiedCard from './alert-card';
 import TimeCarousel from './time-carousel';
 import OpenLessonsCarousel from './open-lesson-carousel';
 import DropdownList from './list-dropdown';
+import { getNextThreeWeeks } from '../func-js/time-slot';
 
 const FullScreenCard = () => {
   const [selectedCard, setSelectedCard] = useState(null);
@@ -13,14 +14,13 @@ const FullScreenCard = () => {
   const [notificationEnabled, setNotificationsEnabled] = useState(false);
   const [openLessonEnabled, setOpenLessonEnabled] = useState(true);
   const [bookLessonEnabled, setBookLessonEnabled] = useState(false);
-  
-  // Generate time slots from 08:00 to 20:00 (24-hour format)
+  const [slideData, setSlideData] = useState([]);
+
   const timeSlots = Array.from({ length: 13 }, (_, index) => {
     const hour = 8 + index;
     return `${hour.toString().padStart(2, '0')}:00`;
   });
 
-  // Function to render rows of MiniCards
   const renderMiniCardRows = (cards) => {
     const rows = cards.reduce((acc, time, index) => {
       if (index % 5 === 0) {
@@ -45,9 +45,17 @@ const FullScreenCard = () => {
     ));
   };
 
+  useEffect(() => {
+    const fetchSlideData = async () => {
+      const data = await getNextThreeWeeks();
+      setSlideData(data);
+    };
+
+    fetchSlideData();
+  }, []);
+
   return (
     <div className="flex items-center justify-center bg-gray-50">
-      {/* Controls the height and width of the screen */}
       <div className="bg-white shadow-md rounded-xl border border-gray-200 w-[700px] items-center mt-8 overflow-auto">  
         <div className="p-6">
           <h1 className="text-2xl font-bold text-gray-800">Logo</h1>
@@ -57,14 +65,7 @@ const FullScreenCard = () => {
         <div className="bg-[#f3f4f6] p-4 rounded-lg shadow-lg">
           <div className="flex flex-row items-center space-x-4">
             <TeacherSwapCard />
-            <TimeCarousel slideData={[
-              { day: 'FRI', date: '19', month: 'Sep' },
-              { day: 'SAT', date: '20', month: 'Sep' },
-              { day: 'SUN', date: '21', month: 'Sep' },
-              { day: 'MON', date: '22', month: 'Sep' },
-              { day: 'TUE', date: '23', month: 'Sep' },
-              { day: 'WED', date: '24', month: 'Sep' },
-            ]} />
+            <TimeCarousel slideData={slideData} />
           </div>
 
           <div className="flex flex-row justify-between mt-4 items-center">
@@ -117,9 +118,6 @@ const FullScreenCard = () => {
                 </div>                
               </div>
             )}
-            {/* Display of available teachers at the time that the user has selected */}
-            {/* This could be a dropdown list with teacher options */}
-
             <div>
               <DropdownList />
             </div>

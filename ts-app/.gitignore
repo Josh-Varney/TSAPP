@@ -18,6 +18,7 @@
 
 # json file
 staff.json
+env.json
 
 # misc
 .DS_Store

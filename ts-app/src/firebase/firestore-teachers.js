@@ -1,13 +1,6 @@
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
+const { db } = require("./firebase-service");
 const fs = require('fs'); // Use require instead of import
 const e = require('express');
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-});
-
-const db = admin.firestore();
 
 async function findTeacherID(teacherName) {
     // Validate and find the staff by name
@@ -91,9 +84,23 @@ async function obtainTeacherProfile(teacherID){
     }
 }
 
-// obtainTeacherProfile(15);
+async function getAllTeacherIDs(){
+    try {
+        const querySnapshot = await db.collection('teachers').get();
+
+        if (querySnapshot){
+            const teacherIDs = querySnapshot.docs.map(doc => doc.data().teacherID);
+            return teacherIDs;
+        } else {
+            console.log("Error: Teachers QuerySnapshot cannot be found");
+        }
+    } catch (error){
+        console.log("Error: " + error);
+    }
+}
 
 module.exports = {
     findTeacherID,
     obtainTeacherProfile,
+    getAllTeacherIDs,
 };

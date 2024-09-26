@@ -1,14 +1,5 @@
 const { FieldValue } = require('firebase-admin').firestore;
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
-
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-});
-
-// Get Firestore instance
-const db = admin.firestore();
+const { db } = require("./firebase-service");
 
 // Function to remove a specific lesson for a user by email, bookingDate, and bookingTime
 async function removeLesson(userEmail, bookingDate, bookingTime) {

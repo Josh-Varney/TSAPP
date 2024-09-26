@@ -10,14 +10,13 @@ const TimeCarousel = ({ slideData }) => {
   };
 
   return (
-    <div className="flex flex-row justify-center items-center w-full">
+    <div className="flex flex-row justify-center items-center">
       <CarouselProvider
-        naturalSlideWidth={125}
-        naturalSlideHeight={125}
         totalSlides={slideData.length}
         visibleSlides={5}
         isIntrinsicHeight={true}
         currentSlide={currentSlide} // Controlled slide index
+        style={{ width: '530px' }}
       >
         <Slider className="flex px-4">
           {slideData.map((slide, index) => (
@@ -27,7 +26,7 @@ const TimeCarousel = ({ slideData }) => {
               onClick={() => handleSlideClick(index)} // Handle click event
             >
               <div
-                className={`p-5 rounded-lg h-full flex flex-col justify-center items-center cursor-pointer ${
+                className={`rounded-lg h-full flex flex-col justify-center items-center cursor-pointer ${
                   currentSlide === index ? '' : ''
                 }`}
               >
@@ -35,7 +34,7 @@ const TimeCarousel = ({ slideData }) => {
                 <h1
                   className={`font-bold ${
                     currentSlide === index
-                      ? 'rounded-full bg-black text-white px-2 py-1'
+                      ? 'rounded-full bg-black text-white px-1 py-1'
                       : ''
                   }`}
                 >
@@ -49,18 +48,6 @@ const TimeCarousel = ({ slideData }) => {
       </CarouselProvider>
     </div>
   );
-};
-
-// Default slideData if not provided as prop
-TimeCarousel.defaultProps = {
-  slideData: [
-    { day: 'FRI', date: '19', month: 'Sep' },
-    { day: 'SAT', date: '20', month: 'Sep' },
-    { day: 'SUN', date: '21', month: 'Sep' },
-    { day: 'MON', date: '22', month: 'Sep' },
-    { day: 'TUE', date: '23', month: 'Sep' },
-    { day: 'WED', date: '24', month: 'Sep' },
-  ],
 };
 
 export default TimeCarousel;

@@ -1,11 +1,24 @@
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
+const { db } = require("./firebase-service");
+const { getAllTeacherIDs } = require("./firestore-teachers");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// Check Validity of Date string or Date objects
+function isValidDate(input) {
+  let date;
 
-const db = admin.firestore();
+  // Check if input is a Date object
+  if (input instanceof Date) {
+    date = input;
+  }
+  // Check if input is a string
+  else if (typeof input === 'string') {
+    date = new Date(input);
+  } else {
+    return false; // Input is neither a string nor a Date object
+  }
+
+  // Return true if the date is valid (not NaN)
+  return !isNaN(date);
+}
 
 // YYYY-MM-DD format
 async function getCurrentDate() {
@@ -121,8 +134,47 @@ async function deleteBookingForTeacher(teacherID, bookingDate, time) {
   }
 }
 
+async function checkTimeSlotsFromDate(dateSelected){
+  
+  try {
+    const teacherIDs = await getAllTeacherIDs();
+    const teacherBookedSlots = [];
+    const docRef = db.collection('scheduler').doc(dateSelected);
+    const docSnap = await docRef.get();
+
+    if (isValidDate(dateSelected)){
+      if (docSnap.exists){
+        const existingSchedule = docSnap.data().schedule || {};
+        
+        // Gets Teacher Booked Slot and Time
+        Object.entries(existingSchedule).forEach(([time, teachers]) => {
+          teachers.forEach(teacher => {
+            teacherBookedSlots.push({
+              time,
+              teacherID: teacher.teacherID,
+              isBooked: teacher.bookingDetails.isBooked
+            });
+          });
+        });
+
+        // To display a time, a slot can be booked unless its booked by every teacher
+
+        console.log(teacherBookedSlots);
+
+      } else {
+          console.log("No document Reference");
+      }
+    } else {
+      console.log("Not a Valid Date Enterred");
+    }
+  } catch (error){
+    console.log("Error Located: " + error);
+  } 
+};
+
 // bookLessonForTeacher(teacherName, bookingDate, time, userEmail, tutorSubject, tutorDescription);
 // deleteBookingForTeacher("7", "2024-09-21", "10:00 AM")
+checkTimeSlotsFromDate("2024-09-21");
 
 module.exports = {
   bookLessonForTeacher,
