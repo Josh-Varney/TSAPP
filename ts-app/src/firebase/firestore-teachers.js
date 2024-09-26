@@ -1,159 +1,110 @@
-const { db } = require("./firebase-service");
-const fs = require('fs'); // Use require instead of import
-const e = require('express');
+const { db } = require("./firebase");
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
 
 async function checkTeacherID(teacherID) {
     const querySnapshot = await db.collection('teachers').get();
-
-    querySnapshot.forEach((doc) => {
+    
+    for (const doc of querySnapshot.docs) {
         const docData = doc.data();
-        
-        if (docData.teacherID === teacherID) { // Assuming staffEmail holds the email in JSON
+        if (docData.teacherID === teacherID) {
             return true;
         }
-    });
+    }
     return false;
 }
 
-async function findTeacherID(teacherName) {
-    // Validate and find the staff by name
-    try {
-        // Load the JSON file data
-        const rawData = fs.readFileSync('./staff.json', 'utf8');  // Adjust the path if necessary
-        const data = JSON.parse(rawData);
-
-        // Find the teacher by name
-        const staffMember = data.staff.find(staff => staff.staffName === teacherName);
-
-        if (staffMember) {
-            console.log(`Staff found:`, staffMember);
-            // Query Firestore to find the matching teacher by email
-            const querySnapshot = await db.collection('teachers').get();
-
-            let teacherID = null;
-
-            querySnapshot.forEach((doc) => {
-                const docData = doc.data();
-
-                // Compare the teacherEmail in Firestore with the staffMember's email
-                if (docData.teacherEmail === staffMember.staffEmail) { // Assuming staffEmail holds the email in JSON
-                    console.log('Document found:', doc.id, docData);
-                    teacherID =  doc.teacherID;
-                }
-            });
-
-            if (teacherID) {
-                return teacherID; // Return the found email
-            } else {
-                console.log('No matching document found in Firestore.');
-                return null;
-            }
-
-        } else {
-            console.log(`Staff member with name "${teacherName}" not found.`);
-            return null;  // Return null if not found
-        }
-    } catch (error) {
-        console.error('Error reading or parsing JSON:', error);
-        return null; // Return null in case of error
-    }
-}
-
-// Call the function
-// findTeacherID("James Vardy").then(email => {
-//     if (email) {
-//         console.log(`Email found: ${email}`);
-//     } else {
-//         console.log('Email not found.');
-//     }
-// });
-
-
-async function obtainTeacherProfile(teacherID){
-    // Obtain teacher profile
+async function obtainTeacherProfile(teacherID) {
     try {
         const querySnapshot = await db.collection('teachers').get();
-
         let teacherDoc = null;
 
-        querySnapshot.forEach((doc) => {
+        for (const doc of querySnapshot.docs) {
             const docData = doc.data();
-
-            // Compare the teacherEmail in Firestore with the staffMember's email
-            if (docData.teacherID === teacherID) { // Assuming staffEmail holds the email in JSON
+            if (docData.teacherID === teacherID) {
                 console.log('Document found:', doc.id, docData);
                 teacherDoc = docData;
+                break;
             }
-        });
-
-        if (teacherDoc){
-            console.log("Returning Document");
-            return teacherDoc
-        } else {
-            console.log("Could not find document using Teacher ID")
         }
-    } catch (error){
 
+        if (teacherDoc) {
+            console.log("Returning Document");
+            return teacherDoc;
+        } else {
+            console.log("Could not find document using Teacher ID");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching teacher profile:", error);
+        return null;
     }
 }
 
-async function getAllTeacherIDs(){
+async function getAllTeacherIDs() {
     try {
         const querySnapshot = await db.collection('teachers').get();
-
-        if (querySnapshot){
-            const teacherIDs = querySnapshot.docs.map(doc => doc.data().teacherID);
-            return teacherIDs;
-        } else {
-            console.log("Error: Teachers QuerySnapshot cannot be found");
-        }
-    } catch (error){
-        console.log("Error: " + error);
+        return querySnapshot.docs.map(doc => doc.data().teacherID);
+    } catch (error) {
+        console.error("Error fetching teacher IDs:", error);
+        return null;
     }
 }
 
 async function addTeacherProfile(dbsValidation, firstName, lastName, teacherEmail, teacherID) {
     try {
-        // Validate email format using a regular expression
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(teacherEmail)) {
+        if (!isValidEmail(teacherEmail)) {
             throw new Error("Invalid email format");
         }
 
-        // Check if the email already exists in the database
-        const querySnapshot = await db.collection('teachers')
-            .where('teacherEmail', '==', teacherEmail)
-            .get();
-
-        if (!querySnapshot.empty) {
+        const existingDoc = await db.collection('teachers').doc(teacherEmail).get();
+        if (existingDoc.exists) {
             throw new Error("Email already exists in the database");
         }
 
-        // Prepare teacher data
         const teacherData = {
             dbs_check_valid: dbsValidation,
-            firstName: firstName,
-            lastName: lastName,
-            teacherEmail: teacherEmail,
-            teacherID: teacherID,
+            firstName,
+            lastName,
+            teacherEmail,
+            teacherID,
+            emailValidation: false,
         };
 
-        // Add teacher to the 'teachers' collection
-        const docRef = await db.collection('teachers').add(teacherData);
-
-        // Log the added document ID
-        console.log("Teacher added with ID: ", docRef.id);
-
+        await db.collection('teachers').doc(teacherEmail).set(teacherData);
+        console.log("Teacher added with email as ID: ", teacherEmail);
     } catch (error) {
-        console.log("Error: " + error.message);
+        console.error("Error adding teacher profile:", error.message);
     }
 }
 
-addTeacherProfile(true, "Jane", "Doe", "jane.doe@example.com", "teacher_12345");
+async function deleteTeacherProfile(teacherEmail) {
+    try {
+        if (!isValidEmail(teacherEmail)) {
+            throw new Error("Invalid email format");
+        }
 
+        const docRef = db.collection('teachers').doc(teacherEmail);
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            throw new Error("No teacher found with the provided email.");
+        }
+
+        await docRef.delete();
+        console.log("Teacher removed successfully.");
+    } catch (error) {
+        console.error("Error deleting teacher profile:", error.message);
+    }
+}
+
+// Example usage:
+// addTeacherProfile(true, "Josh", "Doe", "user1@example.com", 1);
 
 module.exports = {
-    findTeacherID,
     checkTeacherID,
     obtainTeacherProfile,
     getAllTeacherIDs,
