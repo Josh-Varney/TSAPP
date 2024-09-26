@@ -1,19 +1,5 @@
 const { FieldValue } = require('firebase-admin').firestore;
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
-
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-});
-
-// Get Firestore instance
-const db = admin.firestore();
-
-// Mock function to retrieve teacher's name asynchronously
-async function findTeacherName(teacherID) {
-    return "John Cena";  // Replace with actual logic if necessary
-}
+const { db } = require("./firebase-service");
 
 // Function to remove a specific lesson for a user by email, bookingDate, and bookingTime
 async function removeLesson(userEmail, bookingDate, bookingTime) {
@@ -60,12 +46,9 @@ async function removeLesson(userEmail, bookingDate, bookingTime) {
 // Function to log activity into Firestore
 async function logActivity(teacherID, userEmail, bookingDate, bookingTime, bookingLength, tutorSubject, tutorDescription) {
     try {
-        // Await the teacher's name since it's an asynchronous function
-        const teacherName = await findTeacherName(teacherID);
-
         // Construct activity data object
         const activityData = {
-            teacherName: teacherName,
+            teacherID: teacherID,
             lessonSummary: {
                 bookingTime: bookingTime,
                 bookingLength : bookingLength,
@@ -192,3 +175,10 @@ async function getLessonActivity(userEmail) {
 //         console.log("All lessons:", lessons);
 //     }
 // });
+
+module.exports = {
+    removeLesson,
+    logActivity,
+    updateLessonFeedback,
+    getLessonActivity,
+};

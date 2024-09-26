@@ -1,39 +1,40 @@
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
+const { db } = require("./firebase-service");
+const { getAllTeacherIDs } = require("./firestore-teachers");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// Check Validity of Date string or Date objects
+function isValidDate(input) {
+  let date;
 
-const db = admin.firestore();
+  // Check if input is a Date object
+  if (input instanceof Date) {
+    date = input;
+  }
+  // Check if input is a string
+  else if (typeof input === 'string') {
+    date = new Date(input);
+  } else {
+    return false; // Input is neither a string nor a Date object
+  }
 
-// Function to get the current date in YYYY-MM-DD format
+  // Return true if the date is valid (not NaN)
+  return !isNaN(date);
+}
+
+// YYYY-MM-DD format
 async function getCurrentDate() {
   const currentDate = new Date();
-  const year = currentDate.getUTCFullYear();
-  const month = (currentDate.getUTCMonth() + 1).toString().padStart(2, '0'); // Adjust for zero-based month
-  const day = currentDate.getUTCDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
+  return `${currentDate.getUTCFullYear()}-${(currentDate.getUTCMonth() + 1).toString().padStart(2, '0')}-${currentDate.getUTCDate().toString().padStart(2, '0')}`;
+};
 
-// Function to get the current time in HH:mm:ss format
+// HH:MM:SS format
 async function getCurrentTime() {
   const currentDate = new Date();
-  const hours = currentDate.getUTCHours().toString().padStart(2, '0');
-  const minutes = currentDate.getUTCMinutes().toString().padStart(2, '0');
-  const seconds = currentDate.getUTCSeconds().toString().padStart(2, '0');
-  return `${hours}:${minutes}:${seconds} UTC`;
-}
+  return `${currentDate.getUTCHours().toString().padStart(2, '0')}:${currentDate.getUTCMinutes().toString().padStart(2, '0')}:${currentDate.getUTCSeconds().toString().padStart(2, '0')} UTC`;
+};
 
-// async function getTeacherID(teacherName){
+// Book a Lesson
+async function bookLessonForTeacher(teacherID, bookingDate, time, userEmail, tutorSubject, tutorDescription) {
 
-// }
-
-// Function to book a lesson for a teacher
-async function bookLessonForTeacher(teacherName, bookingDate, time, userEmail, tutorSubject, tutorDescription) {
-  const teacherID = "15"; // Placeholder for teacherID. Modify as needed
-
-  // Construct booking data
   const bookingData = {
     teacherID: teacherID,
     bookingDetails: {
@@ -47,10 +48,10 @@ async function bookLessonForTeacher(teacherName, bookingDate, time, userEmail, t
   };
 
   try {
-    // Reference to the document using the booking date
+    // Booking date reference
     const docRef = db.collection('scheduler').doc(bookingDate);
 
-    // Check if the document already exists
+    // Document obtain
     const docSnap = await docRef.get();
 
     if (docSnap.exists) {
@@ -80,11 +81,10 @@ async function bookLessonForTeacher(teacherName, bookingDate, time, userEmail, t
       // Create a new document if it doesn't exist
       await docRef.set({
         schedule: {
-          [time]: [bookingData] // Initialize with an array
+          [time]: [bookingData] // Array Initialisation
         }
       });
     }
-
     console.log("Booking added successfully for teacher:", teacherName);
 
   } catch (error) {
@@ -134,5 +134,51 @@ async function deleteBookingForTeacher(teacherID, bookingDate, time) {
   }
 }
 
+async function checkTimeSlotsFromDate(dateSelected){
+  
+  try {
+    const teacherIDs = await getAllTeacherIDs();
+    const teacherBookedSlots = [];
+    const docRef = db.collection('scheduler').doc(dateSelected);
+    const docSnap = await docRef.get();
+
+    if (isValidDate(dateSelected)){
+      if (docSnap.exists){
+        const existingSchedule = docSnap.data().schedule || {};
+        
+        // Gets Teacher Booked Slot and Time
+        Object.entries(existingSchedule).forEach(([time, teachers]) => {
+          teachers.forEach(teacher => {
+            teacherBookedSlots.push({
+              time,
+              teacherID: teacher.teacherID,
+              isBooked: teacher.bookingDetails.isBooked
+            });
+          });
+        });
+
+        // To display a time, a slot can be booked unless its booked by every teacher
+
+        console.log(teacherBookedSlots);
+
+      } else {
+          console.log("No document Reference");
+      }
+    } else {
+      console.log("Not a Valid Date Enterred");
+    }
+  } catch (error){
+    console.log("Error Located: " + error);
+  } 
+};
+
 // bookLessonForTeacher(teacherName, bookingDate, time, userEmail, tutorSubject, tutorDescription);
 // deleteBookingForTeacher("7", "2024-09-21", "10:00 AM")
+checkTimeSlotsFromDate("2024-09-21");
+
+module.exports = {
+  bookLessonForTeacher,
+  deleteBookingForTeacher,
+  getCurrentTime,
+  getCurrentDate,
+};
