@@ -1,5 +1,5 @@
 const { db } = require("./firebase-service");
-const { getAllTeacherIDs } = require("./firestore-teachers");
+const { getAllTeacherIDs, checkTeacherID } = require("./firestore-teachers");
 
 // Check Validity of Date string or Date objects
 function isValidDate(input) {
@@ -34,6 +34,11 @@ async function getCurrentTime() {
 
 // Book a Lesson
 async function bookLessonForTeacher(teacherID, bookingDate, time, userEmail, tutorSubject, tutorDescription) {
+
+  if (!checkTeacherID(teacherID)){
+    console.log("Not an Authenticated Teacher");
+    return;
+  }
 
   const bookingData = {
     teacherID: teacherID,
@@ -85,7 +90,7 @@ async function bookLessonForTeacher(teacherID, bookingDate, time, userEmail, tut
         }
       });
     }
-    console.log("Booking added successfully for teacher:", teacherName);
+    console.log("Booking added successfully for teacher:", teacherID);
 
   } catch (error) {
     console.error("Error booking the lesson:", error);
@@ -159,6 +164,7 @@ async function checkTimeSlotsFromDate(dateSelected){
 
         // To display a time, a slot can be booked unless its booked by every teacher
 
+        console.log(teacherIDs);
         console.log(teacherBookedSlots);
 
       } else {
@@ -172,9 +178,17 @@ async function checkTimeSlotsFromDate(dateSelected){
   } 
 };
 
-// bookLessonForTeacher(teacherName, bookingDate, time, userEmail, tutorSubject, tutorDescription);
+bookLessonForTeacher(
+  15, 
+  "2024-09-21", 
+  "10:00 AM", 
+  "user@example.com", 
+  "Mathematics", 
+  "Looking to improve algebra skills."
+);
+
 // deleteBookingForTeacher("7", "2024-09-21", "10:00 AM")
-checkTimeSlotsFromDate("2024-09-21");
+// checkTimeSlotsFromDate("2024-09-21");
 
 module.exports = {
   bookLessonForTeacher,

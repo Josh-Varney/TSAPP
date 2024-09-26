@@ -2,6 +2,19 @@ const { db } = require("./firebase-service");
 const fs = require('fs'); // Use require instead of import
 const e = require('express');
 
+async function checkTeacherID(teacherID) {
+    const querySnapshot = await db.collection('teachers').get();
+
+    querySnapshot.forEach((doc) => {
+        const docData = doc.data();
+        
+        if (docData.teacherID === teacherID) { // Assuming staffEmail holds the email in JSON
+            return true;
+        }
+    });
+    return false;
+}
+
 async function findTeacherID(teacherName) {
     // Validate and find the staff by name
     try {
@@ -99,8 +112,49 @@ async function getAllTeacherIDs(){
     }
 }
 
+async function addTeacherProfile(dbsValidation, firstName, lastName, teacherEmail, teacherID) {
+    try {
+        // Validate email format using a regular expression
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(teacherEmail)) {
+            throw new Error("Invalid email format");
+        }
+
+        // Check if the email already exists in the database
+        const querySnapshot = await db.collection('teachers')
+            .where('teacherEmail', '==', teacherEmail)
+            .get();
+
+        if (!querySnapshot.empty) {
+            throw new Error("Email already exists in the database");
+        }
+
+        // Prepare teacher data
+        const teacherData = {
+            dbs_check_valid: dbsValidation,
+            firstName: firstName,
+            lastName: lastName,
+            teacherEmail: teacherEmail,
+            teacherID: teacherID,
+        };
+
+        // Add teacher to the 'teachers' collection
+        const docRef = await db.collection('teachers').add(teacherData);
+
+        // Log the added document ID
+        console.log("Teacher added with ID: ", docRef.id);
+
+    } catch (error) {
+        console.log("Error: " + error.message);
+    }
+}
+
+addTeacherProfile(true, "Jane", "Doe", "jane.doe@example.com", "teacher_12345");
+
+
 module.exports = {
     findTeacherID,
+    checkTeacherID,
     obtainTeacherProfile,
     getAllTeacherIDs,
 };
