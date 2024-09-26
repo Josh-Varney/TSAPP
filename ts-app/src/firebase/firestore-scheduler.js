@@ -139,6 +139,27 @@ async function deleteBookingForTeacher(teacherID, bookingDate, time) {
   }
 }
 
+function getFullyBookedTimes(teachers, bookings) {
+  const fullyBookedTimes = new Set(); // To store times when all teachers are booked
+
+  // Extract unique times from bookings
+  const uniqueTimes = [...new Set(bookings.map(booking => booking.time))];
+
+  // Check each time to see if all teachers are booked
+  for (const time of uniqueTimes) {
+      const allBooked = teachers.every(teacherID => {
+          const booking = bookings.find(b => b.teacherID === teacherID && b.time === time);
+          return booking && booking.isBooked; // Check if booking exists and is booked
+      });
+
+      if (allBooked) {
+          fullyBookedTimes.add(time); // Add to the set of fully booked times
+      }
+  }
+
+  return [...fullyBookedTimes]; // Convert Set back to array
+}
+
 async function checkTimeSlotsFromDate(dateSelected){
   
   try {
@@ -163,10 +184,9 @@ async function checkTimeSlotsFromDate(dateSelected){
         });
 
         // To display a time, a slot can be booked unless its booked by every teacher
+        const fullyBookedTimes = getFullyBookedTimes(teacherIDs, teacherBookedSlots);
 
-        console.log(teacherIDs);
-        console.log(teacherBookedSlots);
-
+        return fullyBookedTimes;
       } else {
           console.log("No document Reference");
       }
@@ -178,17 +198,73 @@ async function checkTimeSlotsFromDate(dateSelected){
   } 
 };
 
-bookLessonForTeacher(
-  15, 
-  "2024-09-21", 
-  "10:00 AM", 
-  "user@example.com", 
-  "Mathematics", 
-  "Looking to improve algebra skills."
-);
+async function checkWhosAvailableAtTime(dateSelected, timeSelected) {
+  try {
+      const teacherIDs = await getAllTeacherIDs(); // Fetch all teacher IDs
+      const teacherAvailableIDs = []; // Initialize an array for available teachers
+
+      const docRef = db.collection('scheduler').doc(dateSelected);
+      const docSnap = await docRef.get();
+
+      if (isValidDate(dateSelected)) {
+          if (docSnap.exists) {
+              const existingSchedule = docSnap.data().schedule || {};
+
+              // Initialize a Set to track booked teachers
+              const bookedTeachersSet = new Set();
+
+              // Check if the specified time exists in the schedule
+              if (existingSchedule[timeSelected]) {
+                  // Loop through the teachers booked at the selected time
+                  existingSchedule[timeSelected].forEach(teacher => {
+                      if (teacher.bookingDetails.isBooked) {
+                          bookedTeachersSet.add(teacher.teacherID); // Track booked teachers
+                      }
+                  });
+              }
+
+              // Determine available teachers
+              teacherIDs.forEach(teacherID => {
+                  // If the teacher is not in the booked set, they are available
+                  if (!bookedTeachersSet.has(teacherID)) {
+                      teacherAvailableIDs.push({
+                          teacherID: teacherID,
+                          isBooked: false // They are available
+                      });
+                  }
+              });
+
+              // Return the list of available teachers
+
+              console.log(teacherAvailableIDs);
+              return teacherAvailableIDs;
+          } else {
+              console.log("Error: No Document Reference");
+              return [];
+          }
+      } else {
+          console.log("Error: Date is Not Valid");
+          return [];
+      }
+  } catch (error) {
+      console.log("Error: ", error);
+      return [];
+  }
+}
+
+
+// bookLessonForTeacher(
+//   15, 
+//   "2024-09-21", 
+//   "10:00 AM", 
+//   "user@example.com", 
+//   "Mathematics", 
+//   "Looking to improve algebra skills."
+// );
 
 // deleteBookingForTeacher("7", "2024-09-21", "10:00 AM")
-// checkTimeSlotsFromDate("2024-09-21");
+// bookLessonForTeacher(3, "2024-09-21", "10:00 AM", "pretend3@gmail.com", "biology", "description example");
+// checkWhosAvailableAtTime("2024-09-21", "11:00 AM");
 
 module.exports = {
   bookLessonForTeacher,

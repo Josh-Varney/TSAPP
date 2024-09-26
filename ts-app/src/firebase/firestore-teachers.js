@@ -59,16 +59,6 @@ async function findTeacherID(teacherName) {
     }
 }
 
-// Call the function
-// findTeacherID("James Vardy").then(email => {
-//     if (email) {
-//         console.log(`Email found: ${email}`);
-//     } else {
-//         console.log('Email not found.');
-//     }
-// });
-
-
 async function obtainTeacherProfile(teacherID){
     // Obtain teacher profile
     try {
@@ -121,11 +111,8 @@ async function addTeacherProfile(dbsValidation, firstName, lastName, teacherEmai
         }
 
         // Check if the email already exists in the database
-        const querySnapshot = await db.collection('teachers')
-            .where('teacherEmail', '==', teacherEmail)
-            .get();
-
-        if (!querySnapshot.empty) {
+        const existingDoc = await db.collection('teachers').doc(teacherEmail).get();
+        if (existingDoc.exists) {
             throw new Error("Email already exists in the database");
         }
 
@@ -138,24 +125,61 @@ async function addTeacherProfile(dbsValidation, firstName, lastName, teacherEmai
             emailValidation: false,
         };
 
-        // Add teacher to the 'teachers' collection
-        const docRef = await db.collection('teachers').add(teacherData);
+        // Use the teacherEmail as the document reference
+        await db.collection('teachers').doc(teacherEmail).set(teacherData);
 
         // Log the added document ID
-        console.log("Teacher added with ID: ", docRef.id);
+        console.log("Teacher added with email as ID: ", teacherEmail);
 
     } catch (error) {
         console.log("Error: " + error.message);
     }
 }
 
+async function deleteTeacherProfile(teacherEmail) {
+    try {
+        // Validate email format using a regular expression
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(teacherEmail)) {
+            throw new Error("Invalid email format");
+        }
+
+        // Check if the teacher exists in the database
+        const docRef = db.collection('teachers').doc(teacherEmail);
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            throw new Error("No teacher found with the provided email.");
+        }
+
+        // Delete the teacher document
+        await docRef.delete();
+        console.log("Teacher removed successfully.");
+
+    } catch (error) {
+        console.log("Error: " + error.message);
+    }
+}
+
+
 // Send email validation //
 async function sendEmailValidation(params) {
     
 }
 
-addTeacherProfile(true, "Jane", "Doe", "jane.doe@example.com", "teacher_12345");
+// addTeacherProfile(true, "Josh", "Doe", "user1@example.com", 1);
+// addTeacherProfile(true, "Holy", "Doe", "user2.doe@example.com", 2);
+// addTeacherProfile(true, "Bellick", "Doe", "user3.doe@example.com", 3);
+// deleteTeacherProfile("jane.doe@example.com");
 
+// Call the function
+// findTeacherID("James Vardy").then(email => {
+//     if (email) {
+//         console.log(`Email found: ${email}`);
+//     } else {
+//         console.log('Email not found.');
+//     }
+// });
 
 module.exports = {
     findTeacherID,
