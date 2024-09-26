@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const db = require('../firebase/firebase-service'); // Make sure this path is correct
-const { checkTimeSlotsFromDate } = require('../firebase/firestore-scheduler'); // Make sure this path is correct
+const { checkTimeSlotsFromDate, checkWhosAvailableAtTime } = require('../firebase/firestore-scheduler'); // Make sure this path is correct
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,8 +13,13 @@ app.use(bodyParser.json()); // Corrected to invoke json() middleware
 
 // API endpoint to fetch available times
 app.get('/api/getAvailableTimes', async (req, res) => {
+    const { date } = req.query;
+    if (!date){
+        return res.status(400).send('Date is required');
+    }
+
     try {
-        const timesAvailable = await checkTimeSlotsFromDate("2024-09-21"); // Replace with dynamic date if needed
+        const timesAvailable = await checkTimeSlotsFromDate(date); 
         res.json(timesAvailable);
     } catch (error) {
         console.error('Error fetching available times:', error);
@@ -24,14 +29,23 @@ app.get('/api/getAvailableTimes', async (req, res) => {
 
 // API endpoint to get all available teachers at selected time (not yet implemented)
 app.get('/api/getAllAvailableTeachersAtTimeSelected', async (req, res) => {
+    const { dateSelected, timeSelected } = req.query;
+    if (!dateSelected || !timeSelected){
+        return res.status(400).send("Date and teacherId are required");
+    }
     try {
         // Logic to fetch available teachers will go here
-        res.status(200).send("This endpoint is not yet implemented.");
+        const teachersAvailable = await checkWhosAvailableAtTime(dateSelected, timeSelected);
+        res.json(teachersAvailable);
     } catch (error) {
         console.error('Error fetching teachers:', error);
         res.status(500).send('Error fetching teachers');
     }
 });
+
+app.get('/api/bookLessonWithTeacher', async (req, res) => {
+    return res.status(400).send("Has not been developed yet");
+})
 
 // Start the server
 app.listen(PORT, () => {
