@@ -129,13 +129,13 @@ async function addTeacherProfile(dbsValidation, firstName, lastName, teacherEmai
             throw new Error("Email already exists in the database");
         }
 
-        // Prepare teacher data
         const teacherData = {
             dbs_check_valid: dbsValidation,
             firstName: firstName,
             lastName: lastName,
             teacherEmail: teacherEmail,
             teacherID: teacherID,
+            emailValidation: false,
         };
 
         // Add teacher to the 'teachers' collection
@@ -147,6 +147,11 @@ async function addTeacherProfile(dbsValidation, firstName, lastName, teacherEmai
     } catch (error) {
         console.log("Error: " + error.message);
     }
+}
+
+// Send email validation //
+async function sendEmailValidation(params) {
+    
 }
 
 addTeacherProfile(true, "Jane", "Doe", "jane.doe@example.com", "teacher_12345");
