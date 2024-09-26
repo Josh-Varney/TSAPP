@@ -45,7 +45,11 @@ app.get('/api/getAllAvailableTeachersAtTimeSelected', async (req, res) => {
 
 app.get('/api/bookLessonWithTeacher', async (req, res) => {
     return res.status(400).send("Has not been developed yet");
-})
+});
+
+app.get('api/cancellationWithTeacher', async (req, res) => {
+    return res.status(400).send("Has not been developed yet");
+});
 
 // Start the server
 app.listen(PORT, () => {

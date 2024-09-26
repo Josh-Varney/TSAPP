@@ -1,5 +1,5 @@
-const { db } = require("./firebase-service");
-const { getAllTeacherIDs, checkTeacherID } = require("./firestore-teachers");
+const { db, getAllTeacherIDs, checkTeacherID } = require("./firestore-teachers");
+
 
 // Check Validity of Date string or Date objects
 function isValidDate(input) {
@@ -97,47 +97,47 @@ async function bookLessonForTeacher(teacherID, bookingDate, time, userEmail, tut
   }
 }
 
-async function deleteBookingForTeacher(teacherID, bookingDate, time) {
-  try {
-    // Reference to the document using the booking date
-    const docRef = db.collection('scheduler').doc(bookingDate);
+// async function deleteBookingForTeacher(teacherID, bookingDate, time) {
+//   try {
+//     // Reference to the document using the booking date
+//     const docRef = db.collection('scheduler').doc(bookingDate);
 
-    // Check if the document exists
-    const docSnap = await docRef.get();
+//     // Check if the document exists
+//     const docSnap = await docRef.get();
 
-    if (docSnap.exists) {
-      // Get the existing schedule
-      const existingSchedule = docSnap.data().schedule || {};
-      const bookingsAtTime = existingSchedule[time] || [];
+//     if (docSnap.exists) {
+//       // Get the existing schedule
+//       const existingSchedule = docSnap.data().schedule || {};
+//       const bookingsAtTime = existingSchedule[time] || [];
 
-      // Find the index of the booking to delete
-      const bookingIndex = bookingsAtTime.findIndex(booking => booking.teacherID === teacherID);
+//       // Find the index of the booking to delete
+//       const bookingIndex = bookingsAtTime.findIndex(booking => booking.teacherID === teacherID);
 
-      if (bookingIndex === -1) {
-        console.log('No booking found for this teacher at this time.');
-        return; // Exit if no booking is found for the given teacher
-      }
+//       if (bookingIndex === -1) {
+//         console.log('No booking found for this teacher at this time.');
+//         return; // Exit if no booking is found for the given teacher
+//       }
 
-      // Remove the booking from the array
-      bookingsAtTime.splice(bookingIndex, 1);
+//       // Remove the booking from the array
+//       bookingsAtTime.splice(bookingIndex, 1);
 
-      // Update the schedule with the modified array
-      await docRef.set({
-        schedule: {
-          [time]: bookingsAtTime.length > 0 ? bookingsAtTime : admin.firestore.FieldValue.delete() // Delete the time slot if empty
-        }
-      }, { merge: true });
+//       // Update the schedule with the modified array
+//       await docRef.set({
+//         schedule: {
+//           [time]: bookingsAtTime.length > 0 ? bookingsAtTime : admin.firestore.FieldValue.delete() // Delete the time slot if empty
+//         }
+//       }, { merge: true });
 
-      console.log(`Booking for teacher ID ${teacherID} deleted successfully for date ${bookingDate} at time ${time}.`);
+//       console.log(`Booking for teacher ID ${teacherID} deleted successfully for date ${bookingDate} at time ${time}.`);
 
-    } else {
-      console.log('No bookings found for the specified date.');
-    }
+//     } else {
+//       console.log('No bookings found for the specified date.');
+//     }
 
-  } catch (error) {
-    console.error("Error deleting the booking:", error);
-  }
-}
+//   } catch (error) {
+//     console.error("Error deleting the booking:", error);
+//   }
+// }
 
 function getFullyBookedTimes(teachers, bookings) {
   const fullyBookedTimes = new Set(); // To store times when all teachers are booked
@@ -276,6 +276,7 @@ async function checkWhosAvailableAtTime(dateSelected, timeSelected) {
               // Initialize a Set to track booked teachers
               const bookedTeachersSet = new Set();
 
+
               // Check if the specified time exists in the schedule
               if (existingSchedule[timeSelected]) {
                   // Loop through the teachers booked at the selected time
@@ -333,7 +334,6 @@ async function checkWhosAvailableAtTime(dateSelected, timeSelected) {
 
 module.exports = {
   bookLessonForTeacher,
-  deleteBookingForTeacher,
   getCurrentTime,
   getCurrentDate,
   checkTimeSlotsFromDate,
