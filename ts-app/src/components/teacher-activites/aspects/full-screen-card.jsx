@@ -7,6 +7,7 @@ import TimeCarousel from './time-carousel';
 import OpenLessonsCarousel from './open-lesson-carousel';
 import DropdownList from './list-dropdown';
 import { getNextThreeWeeks } from '../func-js/time-slot';
+import { checkTimeSlotsFromDate, checkWhosAvailableAtTime } from '../../../firebase/firestore-scheduler';
 
 const FullScreenCard = () => {
   const [selectedCard, setSelectedCard] = useState(null);

@@ -1,6 +1,4 @@
 const { db } = require("./firebase-service");
-const fs = require('fs'); // Use require instead of import
-const e = require('express');
 
 async function checkTeacherID(teacherID) {
     const querySnapshot = await db.collection('teachers').get();
@@ -15,49 +13,47 @@ async function checkTeacherID(teacherID) {
     return false;
 }
 
-async function findTeacherID(teacherName) {
-    // Validate and find the staff by name
-    try {
-        // Load the JSON file data
-        const rawData = fs.readFileSync('./staff.json', 'utf8');  // Adjust the path if necessary
-        const data = JSON.parse(rawData);
+// async function findTeacherID(teacherName) {
+//     try {
+//         // Fetch the JSON file data from the server
+//         const response = await fetch('./staff.json'); // Adjust path accordingly
+//         const data = await response.json();
 
-        // Find the teacher by name
-        const staffMember = data.staff.find(staff => staff.staffName === teacherName);
+//         // Find the teacher by name
+//         const staffMember = data.staff.find(staff => staff.staffName === teacherName);
 
-        if (staffMember) {
-            console.log(`Staff found:`, staffMember);
-            // Query Firestore to find the matching teacher by email
-            const querySnapshot = await db.collection('teachers').get();
+//         if (staffMember) {
+//             console.log(`Staff found:`, staffMember);
+//             // Query Firestore to find the matching teacher by email
+//             const querySnapshot = await db.collection('teachers').get();
 
-            let teacherID = null;
+//             let teacherID = null;
 
-            querySnapshot.forEach((doc) => {
-                const docData = doc.data();
+//             querySnapshot.forEach((doc) => {
+//                 const docData = doc.data();
 
-                // Compare the teacherEmail in Firestore with the staffMember's email
-                if (docData.teacherEmail === staffMember.staffEmail) { // Assuming staffEmail holds the email in JSON
-                    console.log('Document found:', doc.id, docData);
-                    teacherID =  doc.teacherID;
-                }
-            });
+//                 // Compare the teacherEmail in Firestore with the staffMember's email
+//                 if (docData.teacherEmail === staffMember.staffEmail) { // Assuming staffEmail holds the email in JSON
+//                     console.log('Document found:', doc.id, docData);
+//                     teacherID = docData.teacherID; // Corrected to docData
+//                 }
+//             });
 
-            if (teacherID) {
-                return teacherID; // Return the found email
-            } else {
-                console.log('No matching document found in Firestore.');
-                return null;
-            }
-
-        } else {
-            console.log(`Staff member with name "${teacherName}" not found.`);
-            return null;  // Return null if not found
-        }
-    } catch (error) {
-        console.error('Error reading or parsing JSON:', error);
-        return null; // Return null in case of error
-    }
-}
+//             if (teacherID) {
+//                 return teacherID; // Return the found email
+//             } else {
+//                 console.log('No matching document found in Firestore.');
+//                 return null;
+//             }
+//         } else {
+//             console.log(`Staff member with name "${teacherName}" not found.`);
+//             return null;  // Return null if not found
+//         }
+//     } catch (error) {
+//         console.error('Error fetching or parsing JSON:', error);
+//         return null; // Return null in case of error
+//     }
+// }
 
 async function obtainTeacherProfile(teacherID){
     // Obtain teacher profile
@@ -181,8 +177,9 @@ async function sendEmailValidation(params) {
 //     }
 // });
 
+// findTeacherID("Josh Doe");
+
 module.exports = {
-    findTeacherID,
     checkTeacherID,
     obtainTeacherProfile,
     getAllTeacherIDs,
