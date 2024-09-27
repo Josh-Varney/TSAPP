@@ -4,13 +4,16 @@ import 'pure-react-carousel/dist/react-carousel.es.css';
 import { getDateTimeString } from '../func-js/time-slot';
 import { fetchAvailableTimes } from '../../../middleware/server-middle';
 
-const TimeCarousel = ({ slideData, onAvailableTimesChange }) => {
+const TimeCarousel = ({ slideData, onAvailableTimesChange, onCurrentSlideDataChange }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const handleSlideClick = async (index) => {
     setCurrentSlide(index);
     const day = Number(slideData[index].month); // Assuming month is a number
     const monthAbbr = slideData[index].date;
+
+    const selectedSlide = slideData[index];
+    onCurrentSlideDataChange(selectedSlide);
 
     const dateSelected = getDateTimeString(day, monthAbbr);
     

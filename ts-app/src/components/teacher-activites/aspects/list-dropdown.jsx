@@ -3,7 +3,8 @@ import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icon
 import PrivateLessonCarousel from './private-lesson-carousel';
 
 const DropdownList = () => {
-  // Sample list of items to display
+
+  // Pass Through The Available Teachers 
   const items = [
     { name: 'Joshua Varney', subtitle: 'Subtitle Tags' },
     { name: 'Daniel Stanley', subtitle: 'Subtitle Tags' },

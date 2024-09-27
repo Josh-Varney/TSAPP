@@ -115,7 +115,7 @@ export async function checkTimeSlotsFromDate(dateSelected) {
         const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
-            console.log("No schedule found for the selected date.");
+            // console.log("No schedule found for the selected date.");
             return generateRemainingTimes([]);
         }
 
@@ -157,7 +157,8 @@ export async function checkWhosAvailableAtTime(dateSelected, timeSelected) {
 
         if (!docSnap.exists()) {
             console.log("No schedule found for the selected date.");
-            return [];
+            const teacherIDs = await getAllTeacherIDs();
+            return teacherIDs;
         }
 
         const existingSchedule = docSnap.data()?.schedule || {};

@@ -7,9 +7,9 @@ import TimeCarousel from './time-carousel';
 import OpenLessonsCarousel from './open-lesson-carousel';
 import DropdownList from './list-dropdown';
 import { getNextThreeWeeks } from '../func-js/time-slot';
-import { checkTimeSlotsFromDate, checkWhosAvailableAtTime } from '../../../firebase/firestore-scheduler';
 import { getDateTimeString } from '../func-js/time-slot';
-import { fetchAvailableTimes } from '../../../middleware/server-middle';
+import { fetchAvailableTimes, fetchAvailableTeachers, fetchTeacherProfile } from '../../../middleware/server-middle';
+
 
 const FullScreenCard = () => {
   const [selectedCard, setSelectedCard] = useState(null);
@@ -19,6 +19,7 @@ const FullScreenCard = () => {
   const [bookLessonEnabled, setBookLessonEnabled] = useState(false);
   const [slideData, setSlideData] = useState([]);
   const [availableTimes, setAvailableTimes] = useState([]);
+  const [currentSlideData, setCurrentSlideData] = useState(null);
 
   const handleAvailableTimesChange = (times) => {
     setAvailableTimes(times);
@@ -30,6 +31,24 @@ const FullScreenCard = () => {
     setAvailableTimes(availableTimes);
   };
 
+  const handleCurrentSlideDataChange = (slideData) => {
+    setCurrentSlideData(slideData); 
+  };
+
+  // Function to handle mini card clicks and log the time
+  const handleMiniCardClick = async (time) => {
+    const dateSelectedString = getDateTimeString(currentSlideData.month, currentSlideData.date);
+
+    const availableTeachers = await fetchAvailableTeachers(dateSelectedString, time);
+
+    if (availableTeachers){
+      const profiles = await Promise.all(
+        availableTeachers.map(teacher => fetchTeacherProfile(teacher))
+      );
+    }
+    
+    setSelectedCard(time); 
+  };
 
   const renderMiniCardRows = (cards) => {
     const rows = cards.reduce((acc, time, index) => {
@@ -41,8 +60,8 @@ const FullScreenCard = () => {
           key={index}
           id={index}
           time={time}
-          isSelected={selectedCard === index}
-          onCardClick={setSelectedCard}
+          isSelected={selectedCard === time}
+          onCardClick={() => handleMiniCardClick(time)} // Pass the time to the click handler
         />
       );
       return acc;
@@ -59,6 +78,7 @@ const FullScreenCard = () => {
     const fetchSlideData = async () => {
       const data = await getNextThreeWeeks();
       setSlideData(data);
+      setCurrentSlideData(data[0]);
 
       // Fetch initial available times based on the first slide's date
       if (data.length > 0) {
@@ -83,7 +103,7 @@ const FullScreenCard = () => {
         <div className="bg-[#f3f4f6] p-4 rounded-lg shadow-lg">
           <div className="flex flex-row items-center space-x-4">
             <TeacherSwapCard />
-            <TimeCarousel slideData={slideData} onAvailableTimesChange={handleAvailableTimesChange} />
+            <TimeCarousel slideData={slideData} onAvailableTimesChange={handleAvailableTimesChange} onCurrentSlideDataChange={handleCurrentSlideDataChange} />
           </div>
 
           <div className="flex flex-row justify-between mt-4 items-center">

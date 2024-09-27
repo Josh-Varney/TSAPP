@@ -1,17 +1,36 @@
+// server-middle.js (or wherever you need it)
+import { env } from "../next.config.js";
 
-export async function fetchAvailableTimes(date) {
+async function fetchData(url) {
     try {
-        // Store this in an env
-        const response = await fetch(`http://localhost:5000/api/getAvailableTimes?date=${date}`);
+        const response = await fetch(url);
 
-        if (!response.ok){
-            throw new Error(`Error: ${response.statusText}`);
+        console.log(response)
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}, message: ${response.statusText}`);
         }
-
-        const data = await response.json();
-        // console.log(data);
-        return data;
-    } catch (error){
-        console.log("Error Middleware: " + error);
+        return await response.json();
+    } catch (error) {
+        console.error("Error Middleware: ", error);
+        throw error; 
     }
 }
+
+export async function fetchAvailableTimes(date) {
+    const url = `${env.SERVER_API}/api/getAvailableTimes?date=${date}`; 
+    return fetchData(url);
+}
+
+export async function fetchAvailableTeachers(dateSelected, timeSelected) {
+    const url = `${env.SERVER_API}/api/getAllAvailableTeachersAtTimeSelected?dateSelected=${dateSelected}&timeSelected=${timeSelected}`;
+    return fetchData(url);
+}
+
+export async function fetchTeacherProfile(teacherID) {
+    const url = `${env.SERVER_API}/api/getTeacherProfile?teacherID=${teacherID}`;
+    return fetchData(url);
+}
+
+
+const data = await fetchTeacherProfile(3);
+console.log(data);

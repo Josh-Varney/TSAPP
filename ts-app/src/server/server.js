@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { db } from '../firebase/firebase.js';
 import { checkTimeSlotsFromDate, checkWhosAvailableAtTime } from '../firebase/firestore-scheduler.js'; 
+import { checkTeacherID, obtainTeacherProfile } from '../firebase/firestore-teachers.js';
 
 const app = express();
 const PORT = 5000;
@@ -17,7 +18,6 @@ app.get('/api/getAvailableTimes', async (req, res) => {
     if (!date) {
         return res.status(400).send('Date is required');
     }
-
     try {
         const timesAvailable = await checkTimeSlotsFromDate(date);
         res.json(timesAvailable);
@@ -43,14 +43,27 @@ app.get('/api/getAllAvailableTeachersAtTimeSelected', async (req, res) => {
     }
 });
 
-// API endpoint to book a lesson with a teacher (not yet implemented)
-app.get('/api/bookLessonWithTeacher', async (req, res) => {
-    return res.status(400).send("Has not been developed yet");
-});
+app.get('/api/getTeacherProfile', async (req, res) => {
+    const teacherID = Number(req.query.teacherID)
 
-// API endpoint to handle cancellation with a teacher (not yet implemented)
-app.get('/api/cancellationWithTeacher', async (req, res) => {
-    return res.status(400).send("Has not been developed yet");
+    console.log(teacherID);
+
+    if (!teacherID || isNaN(teacherID)) {
+        return res.status(400).json({ error: 'Invalid or missing TeacherID (Number) is required' });
+    }
+
+    try {
+        const validTeacher = await checkTeacherID(teacherID);
+        if (validTeacher) {
+            const teacherProfile = await obtainTeacherProfile(teacherID);
+            return res.json(teacherProfile);
+        } else {
+            return res.status(404).json({ error: 'TeacherID is invalid or not active' });
+        }
+    } catch (error) {
+        console.error("Error fetching teacher profile:", error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // Start the server
