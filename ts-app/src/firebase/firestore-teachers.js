@@ -1,12 +1,12 @@
-const { collection, getDocs, getDoc, setDoc, where, query } = require("firebase/firestore");
-const { db } = require("./firebase");
+import { db } from "./firebase.js"; // Adjust the path if necessary
+import { collection, getDocs, getDoc, setDoc, where, query, doc, deleteDoc } from "firebase/firestore"; // Import necessary Firestore functions
 
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
 
-async function obtainTeacherProfile(teacherID) {
+export async function obtainTeacherProfile(teacherID) {
     try {
         const q = query(collection(db, 'teachers'), where('teacherID', '==', teacherID));
         const querySnapshot = await getDocs(q);
@@ -26,7 +26,7 @@ async function obtainTeacherProfile(teacherID) {
     }
 }
 
-async function addTeacherProfile(dbsValidation, firstName, lastName, teacherEmail, teacherID) {
+export async function addTeacherProfile(dbsValidation, firstName, lastName, teacherEmail, teacherID) {
     try {
         if (!isValidEmail(teacherEmail)) {
             throw new Error("Invalid email format");
@@ -44,7 +44,7 @@ async function addTeacherProfile(dbsValidation, firstName, lastName, teacherEmai
             lastName,
             teacherEmail,
             teacherID,
-            emailValidation: false, 
+            emailValidation: false,
         };
 
         await setDoc(docRef, teacherData);
@@ -58,7 +58,7 @@ async function addTeacherProfile(dbsValidation, firstName, lastName, teacherEmai
     }
 }
 
-async function deleteTeacherProfile(teacherEmail) {
+export async function deleteTeacherProfile(teacherEmail) {
     try {
         if (!isValidEmail(teacherEmail)) {
             throw new Error("Invalid email format");
@@ -83,13 +83,13 @@ async function deleteTeacherProfile(teacherEmail) {
     }
 }
 
-async function getAllTeacherIDs() {
+export async function getAllTeacherIDs() {
     try {
         const teachersCollection = collection(db, 'teachers');
         const querySnapshot = await getDocs(teachersCollection);
         const teacherIDs = querySnapshot.docs
             .map(doc => doc.data().teacherID)
-            .filter(id => id !== undefined); 
+            .filter(id => id !== undefined);
         
         // console.log("Fetched Teacher IDs:", teacherIDs);
         return teacherIDs;
@@ -100,8 +100,7 @@ async function getAllTeacherIDs() {
     }
 }
 
-
-async function checkTeacherID(teacherID) {
+export async function checkTeacherID(teacherID) {
     try {
         const teachersCollection = collection(db, 'teachers'); 
         const querySnapshot = await getDocs(teachersCollection);
@@ -122,9 +121,3 @@ async function checkTeacherID(teacherID) {
         return null; 
     }
 }
-
-module.exports = {
-    checkTeacherID,
-    obtainTeacherProfile,
-    getAllTeacherIDs,
-};
