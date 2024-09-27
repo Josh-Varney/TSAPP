@@ -1,5 +1,4 @@
 
-
 async function fetchAvailableTimes(date) {
     try {
         // Store this in an env

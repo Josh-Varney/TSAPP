@@ -5,7 +5,7 @@ import { db } from '../firebase/firebase.js';
 import { checkTimeSlotsFromDate, checkWhosAvailableAtTime } from '../firebase/firestore-scheduler.js'; 
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
 // Middleware
 app.use(cors());

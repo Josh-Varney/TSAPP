@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
+import { getDateTimeString } from '../func-js/time-slot';
 
 const TimeCarousel = ({ slideData }) => {
   const [currentSlide, setCurrentSlide] = useState(0); // State to manage current slide
 
   const handleSlideClick = (index) => {
-    setCurrentSlide(index); // Shift the carousel to the clicked slide
+    setCurrentSlide(index);
+    console.log(slideData[index]); 
+
+    const day = Number(slideData[index].month); 
+    const monthAbbr = slideData[index].date;
+
+    const dateSelected = getDateTimeString(day, monthAbbr);
   };
 
   return (
