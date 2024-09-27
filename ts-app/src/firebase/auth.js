@@ -1,49 +1,86 @@
-import { GoogleAuthProvider, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, setPersistence, signInWithEmailAndPassword, signInWithPopup, updatePassword } from "firebase/auth";
-import { auth } from "./firebase";
+import {
+    GoogleAuthProvider,
+    createUserWithEmailAndPassword,
+    sendEmailVerification,
+    sendPasswordResetEmail,
+    updatePassword,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    signOut,
+} from "firebase/auth";
+import { auth } from "./firebase.js"; // Ensure the correct path to your firebase.js file
 
-export const doCreateUserWithEmailAndPassword = async (auth, email, password) => {
+export const doCreateUserWithEmailAndPassword = async (email, password) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         return userCredential;
     } catch (error) {
         console.error('Error creating user:', error);
-        throw error;
+        throw error; // Re-throw error for handling at the call site
     }
 };
 
-export const doSignInWithEmailAndPassword = async (auth, email, password) => {
+export const doSignInWithEmailAndPassword = async (email, password) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         return userCredential.user;
     } catch (error) {
         console.error("Error during sign-in:", error);
-        // Log error details to diagnose the issue
         console.error("Error code:", error.code);
         console.error("Error message:", error.message);
-        throw error; // Re-throw error to handle it where the function is called
+        throw error; // Re-throw error for handling at the call site
     }
 };
+
 export const doSignInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    //result.user
-    return result
-}
+    try {
+        const result = await signInWithPopup(auth, provider);
+        return result.user; // Return the signed-in user
+    } catch (error) {
+        console.error("Error signing in with Google:", error);
+        throw error; // Re-throw error for handling at the call site
+    }
+};
 
-export const doSignOut = () => {
-    return auth.signOut();
-}
+export const doSignOut = async () => {
+    try {
+        await signOut(auth);
+        console.log("User signed out successfully.");
+    } catch (error) {
+        console.error("Error signing out:", error);
+        throw error; // Re-throw error for handling at the call site
+    }
+};
 
-export const doPasswordReset = (auth, email) => {
-    return sendPasswordResetEmail(auth, email);
-}
+export const doPasswordReset = async (email) => {
+    try {
+        await sendPasswordResetEmail(auth, email);
+        console.log("Password reset email sent.");
+    } catch (error) {
+        console.error("Error sending password reset email:", error);
+        throw error; // Re-throw error for handling at the call site
+    }
+};
 
-export const doPasswordChange = (password) => {
-    return updatePassword(auth.currentUser, password);
-}
+export const doPasswordChange = async (password) => {
+    try {
+        await updatePassword(auth.currentUser, password);
+        console.log("Password updated successfully.");
+    } catch (error) {
+        console.error("Error updating password:", error);
+        throw error; // Re-throw error for handling at the call site
+    }
+};
 
-export const doSendEmailVerification = () => {
-    return sendEmailVerification(auth.currentUser, {
-        url: `${window.location.origin}/`,
-    });
-}
+export const doSendEmailVerification = async () => {
+    try {
+        await sendEmailVerification(auth.currentUser, {
+            url: `${window.location.origin}/`, // URL to redirect to after verification
+        });
+        console.log("Verification email sent.");
+    } catch (error) {
+        console.error("Error sending email verification:", error);
+        throw error; // Re-throw error for handling at the call site
+    }
+};

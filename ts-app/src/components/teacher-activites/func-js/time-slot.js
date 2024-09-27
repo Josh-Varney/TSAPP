@@ -21,5 +21,43 @@ export async function getNextThreeWeeks() {
     return slideData;
 };
 
+export const getDateTimeString = (day, monthAbbr, year = new Date().getFullYear()) => {
+    const monthMap = {
+        Jan: 0,
+        Feb: 1,
+        Mar: 2,
+        Apr: 3,
+        May: 4,
+        Jun: 5,
+        Jul: 6,
+        Aug: 7,
+        Sep: 8,
+        Oct: 9,
+        Nov: 10,
+        Dec: 11,
+    };
 
+    // Convert day to a number
+    day = Number(day);
 
+    // Validate inputs
+    if (isNaN(day) || day < 1 || day > 31) {
+        throw new Error('Invalid day');
+    }
+
+    if (!monthMap[monthAbbr]) {
+        throw new Error('Invalid month abbreviation');
+    }
+
+    const monthIndex = monthMap[monthAbbr];
+
+    // Create a date object for the selected date using UTC to prevent timezone issues
+    const selectedDate = new Date(Date.UTC(year, monthIndex, day));
+
+    // Format date as YYYY-MM-DD
+    const formattedDate = selectedDate.toISOString().split('T')[0];
+
+    // console.log(formattedDate);
+
+    return formattedDate;
+};

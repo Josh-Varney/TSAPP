@@ -1,17 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import Routes as well
 import './App.css';
-import InitialiseScreen from './components/form/Initialise';
-import CreateAccountScreen from './components/form/Create';
-import HomeScreen from './components/homescreen/home';
-import ForgotPasswordScreen from './components/form/Forgot';
-import ProtectedRoute from './contexts/authContext/route_context'; // Adjust path if needed
-import BookingSystem from './components/teacher-activites/booking-system/booking';
-import CalendarSystem from './components/client-calendar/timetable';
-import EventSystem from './components/large-events/events';
-import ScheduleScreen from './components/calender-activities/activity';
-import ScheduleLesson from './components/teacher-activites/booking-system/schedule-booking';
-import MessagingScreen from './components/client-messaging/messaging-screen';
+import InitialiseScreen from './components/form/Initialise.jsx';
+import CreateAccountScreen from './components/form/Create.jsx';
+import HomeScreen from './components/homescreen/home.jsx';
+import ForgotPasswordScreen from './components/form/Forgot.jsx';
+import ProtectedRoute from './contexts/authContext/route_context.jsx'; // Adjust path if needed
+import BookingSystem from './components/teacher-activites/booking-system/booking.jsx';
+import CalendarSystem from './components/client-calendar/timetable.jsx';
+import EventSystem from './components/large-events/events.jsx';
+import ScheduleScreen from './components/calender-activities/activity.jsx';
+import ScheduleLesson from './components/teacher-activites/booking-system/schedule-booking.jsx';
+import MessagingScreen from './components/client-messaging/messaging-screen.jsx';
 
 function App() {
   return (

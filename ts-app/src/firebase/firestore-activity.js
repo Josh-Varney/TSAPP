@@ -1,57 +1,14 @@
-const { FieldValue } = require('firebase-admin').firestore;
-const { db } = require("./firebase-service");
-
-// Function to remove a specific lesson for a user by email, bookingDate, and bookingTime
-async function removeLesson(userEmail, bookingDate, bookingTime) {
-    try {
-        // Reference to the user's document in the 'activity' collection
-        const docRef = db.collection('activity').doc(userEmail);
-        const docSnap = await docRef.get();
-
-        if (docSnap.exists) {
-            const lessons = docSnap.data().lessons;
-
-            // Check if the lesson exists for the given date and time
-            if (lessons && lessons[bookingDate] && lessons[bookingDate][bookingTime]) {
-                console.log(`Removing lesson on ${bookingDate} at ${bookingTime}.`);
-
-                // Use Firestore's FieldValue.delete() to remove the specific lesson
-                await docRef.update({
-                    [`lessons.${bookingDate}.${bookingTime}`]: FieldValue.delete()
-                });
-
-                // Check if this was the only lesson on that date, and if so, remove the date entry as well
-                const updatedDoc = await docRef.get();
-                const updatedLessons = updatedDoc.data().lessons;
-                if (Object.keys(updatedLessons[bookingDate]).length === 0) {
-                    await docRef.update({
-                        [`lessons.${bookingDate}`]: FieldValue.delete()
-                    });
-                }
-
-                console.log("Lesson removed successfully.");
-            } else {
-                console.log("Error: No lesson found on this date and time.");
-            }
-        } else {
-            console.log("Error: No document found for this user.");
-        }
-    } catch (error) {
-        console.error("Error removing lesson: ", error);
-    }
-}
-
-// removeLesson("shush@gmail.com", "2022-02-01", "9:00 AM");
+import { db } from "./firebase.js"; // Adjust the import as necessary
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore"; // Import necessary Firestore functions
 
 // Function to log activity into Firestore
-async function logActivity(teacherID, userEmail, bookingDate, bookingTime, bookingLength, tutorSubject, tutorDescription) {
+export async function logActivity(teacherID, userEmail, bookingDate, bookingTime, bookingLength, tutorSubject, tutorDescription) {
     try {
-        // Construct activity data object
         const activityData = {
             teacherID: teacherID,
             lessonSummary: {
                 bookingTime: bookingTime,
-                bookingLength : bookingLength,
+                bookingLength: bookingLength,
                 bookingSubject: tutorSubject,
                 bookingDescription: tutorDescription,
             },
@@ -62,35 +19,27 @@ async function logActivity(teacherID, userEmail, bookingDate, bookingTime, booki
             lessonOccurred: null
         };
 
-        // Reference to the user's document in 'activity' collection
-        const docRef = db.collection('activity').doc(userEmail);
+        const docRef = doc(db, 'activity', userEmail);
+        const docSnap = await getDoc(docRef);
 
-        // Fetch the document snapshot
-        const docSnap = await docRef.get();
-
-        if (docSnap.exists) {
-            // Get the lessons data from the document
+        if (docSnap.exists()) {
             const lessons = docSnap.data().lessons;
 
-            // Check if a lesson already exists for the same date and time
             if (lessons && lessons[bookingDate] && lessons[bookingDate][bookingTime]) {
-                // If a lesson exists for the same time, throw an error or return a message
                 console.log(`Error: A lesson is already booked on ${bookingDate} at ${bookingTime}.`);
                 return;
             }
 
-            // Add or update the lesson if no conflict exists
             console.log("No conflicting lesson. Adding or updating lesson.");
-            await docRef.update({
+            await updateDoc(docRef, {
                 [`lessons.${bookingDate}.${bookingTime}`]: activityData
             });
         } else {
-            // Create a new document if it doesn't exist
             console.log("Document does not exist. Creating a new one.");
-            await docRef.set({
+            await setDoc(docRef, {
                 lessons: {
                     [bookingDate]: {
-                        [bookingTime]: activityData  // Initialize with the current lesson data
+                        [bookingTime]: activityData
                     }
                 }
             });
@@ -98,27 +47,21 @@ async function logActivity(teacherID, userEmail, bookingDate, bookingTime, booki
     } catch (error) {
         console.error("Error logging activity: ", error);
     }
-} 
-
-// Example usage of the logActivity function
-// logActivity("4", "shush@gmail.com", "2022-02-01", "9:00 AM", "Biology", "Stinky");
+}
 
 // New function to update lesson feedback and mark if the lesson occurred
-async function updateLessonFeedback(userEmail, bookingDate, bookingTime, lessonFeedback, lessonEngagementScore, lessonOccurred) {
+export async function updateLessonFeedback(userEmail, bookingDate, bookingTime, lessonFeedback, lessonEngagementScore, lessonOccurred) {
     try {
-        // Reference to the user's document in 'activity' collection
-        const docRef = db.collection('activity').doc(userEmail);
-        const docSnap = await docRef.get();
+        const docRef = doc(db, 'activity', userEmail);
+        const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists) {
+        if (docSnap.exists()) {
             const lessons = docSnap.data().lessons;
 
-            // Check if the lesson exists for the given date and time
             if (lessons && lessons[bookingDate] && lessons[bookingDate][bookingTime]) {
                 console.log("Lesson found. Updating feedback and status.");
 
-                // Update only the lessonFeedback and lessonOccurred fields
-                await docRef.update({
+                await updateDoc(docRef, {
                     [`lessons.${bookingDate}.${bookingTime}.lessonFeedback.lessonFeedback`]: lessonFeedback,
                     [`lessons.${bookingDate}.${bookingTime}.lessonFeedback.lessonEngagementScore`]: lessonEngagementScore,
                     [`lessons.${bookingDate}.${bookingTime}.lessonOccurred`]: lessonOccurred
@@ -136,21 +79,13 @@ async function updateLessonFeedback(userEmail, bookingDate, bookingTime, lessonF
     }
 }
 
-// Use of Above Function
-// updateLessonFeedback("shush@gmail.com", "2022-02-01", "9:00 AM", "Great session", 5, true);
-
-// async function () {
-//     // Add logic for deleting feedback
-// }
-
-async function getLessonActivity(userEmail) {
+// Function to get lesson activity for a user
+export async function getLessonActivity(userEmail) {
     try {
-        // Reference to the user's document in 'activity' collection
-        const docRef = db.collection('activity').doc(userEmail);
-        const docSnap = await docRef.get();
+        const docRef = doc(db, 'activity', userEmail);
+        const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists) {
-            // Retrieve the lessons data from the document
+        if (docSnap.exists()) {
             const lessons = docSnap.data().lessons;
             
             if (lessons) {
@@ -169,16 +104,3 @@ async function getLessonActivity(userEmail) {
         return null;
     }
 }
-
-// getLessonActivity("shush@gmail.com").then(lessons => {
-//     if (lessons) {
-//         console.log("All lessons:", lessons);
-//     }
-// });
-
-module.exports = {
-    removeLesson,
-    logActivity,
-    updateLessonFeedback,
-    getLessonActivity,
-};

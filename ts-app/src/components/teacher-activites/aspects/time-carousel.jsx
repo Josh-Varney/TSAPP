@@ -1,12 +1,24 @@
 import React, { useState } from 'react';
 import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
+import { getDateTimeString } from '../func-js/time-slot';
+import { fetchAvailableTimes } from '../../../middleware/server-middle';
 
-const TimeCarousel = ({ slideData }) => {
-  const [currentSlide, setCurrentSlide] = useState(0); // State to manage current slide
+const TimeCarousel = ({ slideData, onAvailableTimesChange }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  const handleSlideClick = (index) => {
-    setCurrentSlide(index); // Shift the carousel to the clicked slide
+  const handleSlideClick = async (index) => {
+    setCurrentSlide(index);
+    const day = Number(slideData[index].month); // Assuming month is a number
+    const monthAbbr = slideData[index].date;
+
+    const dateSelected = getDateTimeString(day, monthAbbr);
+    
+    // Fetch available times based on the selected date
+    const availableTimes = await fetchAvailableTimes(dateSelected);
+    
+    // Call the function to pass available times back to FullScreenCard
+    onAvailableTimesChange(availableTimes);
   };
 
   return (
@@ -15,7 +27,7 @@ const TimeCarousel = ({ slideData }) => {
         totalSlides={slideData.length}
         visibleSlides={5}
         isIntrinsicHeight={true}
-        currentSlide={currentSlide} // Controlled slide index
+        currentSlide={currentSlide}
         style={{ width: '530px' }}
       >
         <Slider className="flex px-4">
@@ -23,20 +35,14 @@ const TimeCarousel = ({ slideData }) => {
             <Slide
               index={index}
               key={index}
-              onClick={() => handleSlideClick(index)} // Handle click event
+              onClick={() => handleSlideClick(index)}
             >
               <div
-                className={`rounded-lg h-full flex flex-col justify-center items-center cursor-pointer ${
-                  currentSlide === index ? '' : ''
-                }`}
+                className={`rounded-lg h-full flex flex-col justify-center items-center cursor-pointer`}
               >
                 <h1 className="font-semibold">{slide.day}</h1>
                 <h1
-                  className={`font-bold ${
-                    currentSlide === index
-                      ? 'rounded-full bg-black text-white px-1 py-1'
-                      : ''
-                  }`}
+                  className={`font-bold ${currentSlide === index ? 'rounded-full bg-black text-white px-1 py-1' : ''}`}
                 >
                   {slide.date}
                 </h1>
