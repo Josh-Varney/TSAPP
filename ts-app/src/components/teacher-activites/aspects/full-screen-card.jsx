@@ -8,6 +8,8 @@ import OpenLessonsCarousel from './open-lesson-carousel';
 import DropdownList from './list-dropdown';
 import { getNextThreeWeeks } from '../func-js/time-slot';
 import { checkTimeSlotsFromDate, checkWhosAvailableAtTime } from '../../../firebase/firestore-scheduler';
+import { getDateTimeString } from '../func-js/time-slot';
+import { fetchAvailableTimes } from '../../../middleware/server-middle';
 
 const FullScreenCard = () => {
   const [selectedCard, setSelectedCard] = useState(null);
@@ -16,11 +18,18 @@ const FullScreenCard = () => {
   const [openLessonEnabled, setOpenLessonEnabled] = useState(true);
   const [bookLessonEnabled, setBookLessonEnabled] = useState(false);
   const [slideData, setSlideData] = useState([]);
+  const [availableTimes, setAvailableTimes] = useState([]);
 
-  const timeSlots = Array.from({ length: 13 }, (_, index) => {
-    const hour = 8 + index;
-    return `${hour.toString().padStart(2, '0')}:00`;
-  });
+  const handleAvailableTimesChange = (times) => {
+    setAvailableTimes(times);
+    console.log(times);
+  };
+
+  const fetchInitialTimes = async (date) => {
+    const availableTimes = await fetchAvailableTimes(date);
+    setAvailableTimes(availableTimes);
+  };
+
 
   const renderMiniCardRows = (cards) => {
     const rows = cards.reduce((acc, time, index) => {
@@ -50,6 +59,14 @@ const FullScreenCard = () => {
     const fetchSlideData = async () => {
       const data = await getNextThreeWeeks();
       setSlideData(data);
+
+      // Fetch initial available times based on the first slide's date
+      if (data.length > 0) {
+        const initialDay = Number(data[0].month);
+        const initialMonthAbbr = data[0].date;
+        const initialDate = getDateTimeString(initialDay, initialMonthAbbr);
+        await fetchInitialTimes(initialDate);
+      }
     };
 
     fetchSlideData();
@@ -66,7 +83,7 @@ const FullScreenCard = () => {
         <div className="bg-[#f3f4f6] p-4 rounded-lg shadow-lg">
           <div className="flex flex-row items-center space-x-4">
             <TeacherSwapCard />
-            <TimeCarousel slideData={slideData} />
+            <TimeCarousel slideData={slideData} onAvailableTimesChange={handleAvailableTimesChange} />
           </div>
 
           <div className="flex flex-row justify-between mt-4 items-center">
@@ -75,7 +92,11 @@ const FullScreenCard = () => {
           </div>
 
           <div className='flex flex-col items-center mt-4'>
-            {renderMiniCardRows(timeSlots)}
+            {availableTimes.length > 0 ? (
+              renderMiniCardRows(availableTimes) // Render available times
+            ) : (
+              <p className="text-gray-600">No available times at this moment.</p> // Message when no times are available
+            )}
           </div>
 
           <div className="mt-4">

@@ -57,7 +57,7 @@ export const getDateTimeString = (day, monthAbbr, year = new Date().getFullYear(
     // Format date as YYYY-MM-DD
     const formattedDate = selectedDate.toISOString().split('T')[0];
 
-    console.log(formattedDate);
+    // console.log(formattedDate);
 
     return formattedDate;
 };

@@ -1,5 +1,5 @@
 
-async function fetchAvailableTimes(date) {
+export async function fetchAvailableTimes(date) {
     try {
         // Store this in an env
         const response = await fetch(`http://localhost:5000/api/getAvailableTimes?date=${date}`);
@@ -9,7 +9,7 @@ async function fetchAvailableTimes(date) {
         }
 
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         return data;
     } catch (error){
         console.log("Error Middleware: " + error);
