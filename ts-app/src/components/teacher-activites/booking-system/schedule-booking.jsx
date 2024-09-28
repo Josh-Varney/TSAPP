@@ -1,7 +1,6 @@
 import React from "react";
 import ScedulerNav from "../aspects/scheduler-nav";
 import FullScreenCard from "../aspects/full-screen-card";
-import { getNextThreeWeeks } from "../func-js/time-slot";
 
 const ScheduleLesson = () => {
     return (

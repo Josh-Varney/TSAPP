@@ -6,8 +6,7 @@ import GetNotifiedCard from './alert-card';
 import TimeCarousel from './time-carousel';
 import OpenLessonsCarousel from './open-lesson-carousel';
 import DropdownList from './list-dropdown';
-import { getNextThreeWeeks } from '../func-js/time-slot';
-import { getDateTimeString } from '../func-js/time-slot';
+import { getNextThreeWeeks, getDateTimeString } from '../../../utils/time-functions/getDate';
 import { fetchAvailableTimes, fetchAvailableTeachers, fetchTeacherProfile, fetchFullyBookedTimes } from '../../../middleware/server-middle';
 import { generateRemainingTimes } from '../../../firebase/firestore-scheduler';
 
@@ -21,7 +20,7 @@ const FullScreenCard = () => {
   const [currentAvailableTeacherData, setCurrentAvailableTeacherData] = useState([]);
   const [isCardVisible, setCardVisible] = useState(true);
 
-  const handleToggle = () => {
+  const handleNotificationToggle = () => {
     setCardVisible(false); // Hide the card when toggle is activated
   };
 
@@ -130,11 +129,11 @@ const FullScreenCard = () => {
             )}
           </div>
 
-          <div className="mt-4">
-            {!notificationEnabled && <GetNotifiedCard onToggle={handleToggle} isVisible={isCardVisible}/>}
+          <div className="mt-10">
+            {!notificationEnabled && <GetNotifiedCard onToggle={handleNotificationToggle} isVisible={isCardVisible}/>}
           </div>
 
-          <div className="flex flex-col mt-4">
+          <div className="flex flex-col mt-10">
             {!openLessonEnabled ? (
               <div>
                 <p className="text-gray-600 font-semibold">Book a place in an Open lesson</p>

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
-import { getDateTimeString } from '../func-js/time-slot';
+import { getDateTimeString } from '../../../utils/time-functions/getDate';
 import { fetchAvailableTimes } from '../../../middleware/server-middle';
-import { generateRemainingTimes } from '../../../firebase/firestore-scheduler';
 
 const TimeCarousel = ({ slideData, onAvailableTimesChange, onCurrentSlideDataChange }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
