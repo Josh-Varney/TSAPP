@@ -199,8 +199,7 @@ export async function checkWhosAvailableAtTime(dateSelected, timeSelected) {
             });
         }
 
-        const availableTeachers = teacherIDs.filter(teacherID => !bookedTeachersSet.has(teacherID));
-        return availableTeachers.map(teacherID => ({ teacherID, isBooked: false }));
+        return teacherIDs.filter(teacherID => !bookedTeachersSet.has(teacherID));;
 
     } catch (error) {
         console.error("Error checking available teachers:", error.message);
@@ -209,5 +208,5 @@ export async function checkWhosAvailableAtTime(dateSelected, timeSelected) {
 }
 
 
-
-// bookLessonForTeacher(3, "2024-09-28", "10:00 AM", "example_user@gmail.com", "bio", "shush");
+checkWhosAvailableAtTime("2024-09-28", "05:00 PM");
+// bookLessonForTeacher(3, "2024-09-28", "05:00 PM", "example_user@gmail.com", "bio", "shush");

@@ -43,6 +43,7 @@ const FullScreenCard = () => {
     const dateSelectedString = getDateTimeString(currentSlideData.month, currentSlideData.date);
 
     const availableTeachers = await fetchAvailableTeachers(dateSelectedString, time);
+    console.log(availableTeachers);
     if (availableTeachers) {
       const profiles = await Promise.all(
         availableTeachers.map(teacher => fetchTeacherProfile(teacher))

@@ -22,7 +22,7 @@ export async function fetchAvailableTimes(date) {
 }
 
 export async function fetchAvailableTeachers(dateSelected, timeSelected) {
-    const url = `${env.SERVER_API}/api/getAllAvailableTeachersAtTimeSelected?dateSelected=${dateSelected}&timeSelected=${timeSelected}`;
+    const url = `${env.SERVER_API}/api/getAllAvailableTeachersAtTimeSelected?dateSelected=${dateSelected}&timeSelected=${encodeURIComponent(timeSelected)}`;
     return fetchData(url);
 }
 
