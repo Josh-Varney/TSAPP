@@ -125,7 +125,7 @@ const FullScreenCard = () => {
             {availableTimes.length > 0 ? (
               renderMiniCardRows(availableTimes) // Render available times
             ) : (
-              <p className="text-gray-600">No available times at this moment.</p> // Message when no times are available
+              <p className="text-gray-600 items-center justify-center text-sm font-semibold pt-8">There are no available times for today. Please select another date.</p> // Message when no times are available
             )}
           </div>
 

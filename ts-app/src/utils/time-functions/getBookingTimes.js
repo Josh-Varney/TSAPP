@@ -21,6 +21,15 @@ export function generateRemainingTimes(providedTimes = [], startTime = '8:00 AM'
     let currentTime = convertTo24Hour(startTime);
     const endTimeDate = convertTo24Hour(endTime);
 
+    // Round up to the next half-hour if the current time is not exactly on the hour or half-hour
+    const currentMinutes = currentTime.getMinutes();
+    if (currentMinutes > 0 && currentMinutes <= 30) {
+        currentTime.setMinutes(30); // Round to the next half-hour if minutes are between 1 and 30
+    } else if (currentMinutes > 30) {
+        currentTime.setHours(currentTime.getHours() + 1); // Increment hour
+        currentTime.setMinutes(0); // Set minutes to 00
+    }
+
     // Validate that the startTime and endTime are within the allowed range
     if (currentTime < allowedStartTime || currentTime > allowedEndTime || endTimeDate > allowedEndTime) {
         return [];
@@ -87,4 +96,29 @@ export function getFullyBookedTimes(teachers, bookings) {
 export async function getCurrentTime() {
     const currentDate = new Date();
     return `${currentDate.getUTCHours().toString().padStart(2, '0')}:${currentDate.getUTCMinutes().toString().padStart(2, '0')}:${currentDate.getUTCSeconds().toString().padStart(2, '0')} UTC`;
+}
+
+export function getTime() {
+    // Get current time
+    let now = new Date();
+
+    // Get current minutes and hours
+    let currentMinutes = now.getMinutes();
+    let currentHour = now.getHours();
+
+    // Determine AM or PM
+    let ampm = currentHour < 12 ? "AM" : "PM";
+    let currentHourDisplay = currentHour % 12 || 12; // Convert 0 to 12 for midnight/noon
+
+    // Format minutes to always be two digits
+    let formattedMinutes = currentMinutes < 10 ? `0${currentMinutes}` : currentMinutes;
+
+    // Format the string
+    let currentTimeString = `${currentHourDisplay}:${formattedMinutes} ${ampm}`;
+    return currentTimeString;
+}
+
+export function isValidTime(timeString) {
+    const regex = /^(0?[1-9]|1[0-2]):([0-5]\d) (AM|PM)$/; // Matches hh:mm AM/PM format
+    return regex.test(timeString);
 }

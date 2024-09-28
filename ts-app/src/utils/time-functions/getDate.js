@@ -77,21 +77,6 @@ export const getDateTimeString = (day, monthAbbr, year = new Date().getFullYear(
     return formattedDate;
 };
 
-export function getNextHour(){
-    // Get current time
-    let now = new Date();
-
-    // Get the next hour
-    let nextHour = (now.getHours() + 1) % 24; // Wrap around to 0 after 23
-
-    // Determine AM or PM
-    let ampm = nextHour < 12 ? "AM" : "PM";
-    let nextHourDisplay = nextHour % 12 || 12; // Convert 0 to 12 for midnight/noon
-
-    // Format the string
-    let nextHourString = `${nextHourDisplay}:00 ${ampm}`;
-    return nextHourString;
-}
 
 export function isValidDate(input) {
     const date = input instanceof Date ? input : new Date(input);

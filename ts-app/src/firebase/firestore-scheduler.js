@@ -5,14 +5,23 @@ import {
     doc,
     getDoc,
     setDoc,
-    updateDoc
+    updateDoc,
+    runTransaction,
 } from "firebase/firestore"; 
-import { getFullyBookedTimes, getCurrentTime, generateRemainingTimes } from "../utils/time-functions/getBookingTimes.js";
-import { isToday, getNextHour, isValidDate, getCurrentDate } from "../utils/time-functions/getDate.js";
+import { getFullyBookedTimes, getCurrentTime, generateRemainingTimes, getTime } from "../utils/time-functions/getBookingTimes.js";
+import { isToday, isValidDate, getCurrentDate } from "../utils/time-functions/getDate.js";
+import { isValidTime } from "../utils/time-functions/getBookingTimes.js";
+import { addMinutes, isValid, parse } from 'date-fns'
 
 // Book a Lesson for a Teacher
-export async function bookLessonForTeacher(teacherID, bookingDate, time, userEmail, tutorSubject, tutorDescription) {
+export async function bookLessonForTeacher(teacherID, bookingDate, bookingTime, userEmail, tutorSubject, tutorDescription, lessonDuration) {
     try {
+        // Validate input fields
+        if (!teacherID || !bookingDate || !bookingTime || !userEmail || !tutorSubject || !tutorDescription || !lessonDuration) {
+            console.log("Missing required booking information.");
+            return;
+        }
+
         if (!checkTeacherID(teacherID)) {
             console.log("Not an Authenticated Teacher");
             return;
@@ -22,67 +31,90 @@ export async function bookLessonForTeacher(teacherID, bookingDate, time, userEma
             teacherID,
             bookingDetails: {
                 bookedBy: userEmail,
-                bookingDate: await getCurrentDate(),
-                bookingTime: await getCurrentTime(),
+                bookingDate: bookingDate,
+                bookingTime: bookingTime,
                 subjectName: tutorSubject,
                 lessonDescription: tutorDescription,
+                duration: lessonDuration, 
                 isBooked: true,
             },
         };
 
-        const docRef = doc(db, 'scheduler', bookingDate);
-        const docSnap = await getDoc(docRef);
+        const docRef = doc(db, 'scheduler', bookingDate); 
 
-        let existingSchedule = docSnap.exists() ? docSnap.data().schedule || {} : {};
-        let bookingsAtTime = existingSchedule[time] || [];
+        await runTransaction(db, async (transaction) => {
+            const docSnap = await transaction.get(docRef);
+            let existingSchedule = docSnap.exists() ? docSnap.data().schedule || {} : {};
+            let bookingsAtTime = existingSchedule[bookingTime] || [];
 
-        const isTeacherAlreadyBooked = bookingsAtTime.some(booking => booking.teacherID === teacherID);
+            const isTeacherAlreadyBooked = bookingsAtTime.some(booking => booking.teacherID === teacherID);
 
-        if (isTeacherAlreadyBooked) {
-            console.log('Teacher is already booked at this time.');
-            return;
-        }
+            if (isTeacherAlreadyBooked) {
+                console.log('Teacher is already booked at this time.');
+                return;
+            }
 
-        bookingsAtTime.push(bookingData);
-        existingSchedule[time] = bookingsAtTime;
+            bookingsAtTime.push(bookingData);
+            existingSchedule[bookingTime] = bookingsAtTime;
 
-        await setDoc(docRef, { schedule: existingSchedule }, { merge: true });
+            transaction.set(docRef, { schedule: existingSchedule }, { merge: true });
+        });
+
         console.log("Booking added successfully for teacher:", teacherID);
 
     } catch (error) {
-        console.error("Error booking the lesson:", error.message);
+        console.error("Error booking the lesson:", error.message, error.stack);
     }
 }
 
 // Delete a Teacher's Booking
-export async function deleteBookingForTeacher(teacherID, bookingDate, time) {
+export async function deleteBookingForTeacher(teacherID, bookingDate, bookingTime) {
     try {
+        // Validate input fields
+        if (!teacherID || !bookingDate || !bookingTime) {
+            console.log("Missing required parameters for deleting booking.");
+            return;
+        }
+
         const docRef = doc(db, 'scheduler', bookingDate);
-        const docSnap = await getDoc(docRef);
 
-        if (!docSnap.exists()) {
-            console.log('No bookings found for the specified date.');
-            return;
-        }
+        // Use a transaction to ensure data integrity
+        await runTransaction(db, async (transaction) => {
+            const docSnap = await transaction.get(docRef);
 
-        let existingSchedule = docSnap.data().schedule || {};
-        let bookingsAtTime = existingSchedule[time] || [];
+            if (!docSnap.exists()) {
+                console.log('No bookings found for the specified date.');
+                return;
+            }
 
-        const bookingIndex = bookingsAtTime.findIndex(booking => booking.teacherID === teacherID);
+            let existingSchedule = docSnap.data().schedule || {};
+            let bookingsAtTime = existingSchedule[bookingTime] || [];
 
-        if (bookingIndex === -1) {
-            console.log('No booking found for this teacher at this time.');
-            return;
-        }
+            const bookingIndex = bookingsAtTime.findIndex(booking => booking.teacherID === teacherID);
 
-        bookingsAtTime.splice(bookingIndex, 1);
-        existingSchedule[time] = bookingsAtTime.length > 0 ? bookingsAtTime : null;
+            if (bookingIndex === -1) {
+                console.log('No booking found for this teacher at this time.');
+                return;
+            }
 
-        await updateDoc(docRef, { schedule: existingSchedule });
-        console.log(`Booking for teacher ID ${teacherID} deleted successfully for date ${bookingDate} at time ${time}.`);
+            // Remove the booking from the array
+            bookingsAtTime.splice(bookingIndex, 1);
+
+            // Update the schedule
+            if (bookingsAtTime.length > 0) {
+                existingSchedule[bookingTime] = bookingsAtTime; // Update with remaining bookings
+            } else {
+                delete existingSchedule[bookingTime]; // Delete the time slot if no bookings remain
+            }
+
+            // Commit the updated schedule
+            transaction.set(docRef, { schedule: existingSchedule }, { merge: true });
+        });
+
+        console.log(`Booking for teacher ID ${teacherID} deleted successfully for date ${bookingDate} at time ${bookingTime}.`);
 
     } catch (error) {
-        console.error("Error deleting the booking:", error.message);
+        console.error("Error deleting the booking:", error.message, error.stack);
     }
 }
 
@@ -119,8 +151,8 @@ export async function checkTimeSlotsFromDate(dateSelected) {
         const fullyBookedTimes = getFullyBookedTimes(teacherIDs, teacherBookedSlots);
 
         if (isToday(dateSelected)){
-            const hour = getNextHour();
-            return generateRemainingTimes(fullyBookedTimes, hour);
+            const cTime = getTime();
+            return generateRemainingTimes(fullyBookedTimes, cTime);
         } else {
             return generateRemainingTimes(fullyBookedTimes);
         }
@@ -170,7 +202,8 @@ export async function obtainFullyBookedTimes(dateSelected) {
     }
 }
 
-// Check Available Teachers at a Specific Time
+
+// Check for Available Time Slots on a Date
 export async function checkWhosAvailableAtTime(dateSelected, timeSelected) {
     try {
         if (!isValidDate(dateSelected)) {
@@ -208,5 +241,6 @@ export async function checkWhosAvailableAtTime(dateSelected, timeSelected) {
 }
 
 
-checkWhosAvailableAtTime("2024-09-28", "05:00 PM");
-// bookLessonForTeacher(3, "2024-09-28", "05:00 PM", "example_user@gmail.com", "bio", "shush");
+// const value = await checkWhosAvailableAtTime("2024-09-28", "04:30 PM");
+// console.log(value);
+// bookLessonForTeacher(3, "2024-09-28", "04:30 PM", "example_user@gmail.com", "bio", "shush", "90");

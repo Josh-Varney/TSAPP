@@ -101,19 +101,18 @@ export async function checkTeacherID(teacherID) {
         const teachersCollection = collection(db, 'teachers'); 
         const querySnapshot = await getDocs(teachersCollection);
         
-        console.log(`Documents retrieved: ${querySnapshot.docs.length}`);
-        
         for (const doc of querySnapshot.docs) {
             const docData = doc.data();
-            console.log("Document data:", docData);
             
+            // Check if the teacherID matches
             if (docData.teacherID === teacherID) {
-                return true; 
+                return true; // Return true if found
             }
         }
-        return false; 
+        return false; // Return false if not found
     } catch (error) {
         console.error("Error checking teacher ID:", error);
-        return null; 
+        return false; // Return false in case of an error
     }
 }
+

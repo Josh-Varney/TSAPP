@@ -27,7 +27,7 @@ app.get('/api/getAvailableTimes', async (req, res) => {
     }
 });
 
-// API endpoint to get all available teachers at selected time (not yet implemented)
+// CHANGE
 app.get('/api/getAllAvailableTeachersAtTimeSelected', async (req, res) => {
     const { dateSelected, timeSelected } = req.query;
     if (!dateSelected || !timeSelected) {
@@ -66,6 +66,7 @@ app.get('/api/getTeacherProfile', async (req, res) => {
     }
 });
 
+// CHANGE
 app.get('/api/getFullyBookedTimes', async (req, res) => {
     const { dateSelected } = req.query;
 
