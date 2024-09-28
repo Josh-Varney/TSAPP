@@ -1,4 +1,3 @@
-import { fetchFullyBookedTimes } from "../middleware/server-middle.js";
 import { db } from "./firebase.js"; // Adjust the import as necessary
 import { getAllTeacherIDs, checkTeacherID } from "./firestore-teachers.js";
 import {
@@ -7,25 +6,9 @@ import {
     getDoc,
     setDoc,
     updateDoc
-} from "firebase/firestore"; // Import necessary Firestore functions
-
-// Helper: Check Validity of Date string or Date objects
-function isValidDate(input) {
-    const date = input instanceof Date ? input : new Date(input);
-    return !isNaN(date.getTime());
-}
-
-// Helper: Get Current Date in YYYY-MM-DD format
-async function getCurrentDate() {
-    const currentDate = new Date();
-    return `${currentDate.getUTCFullYear()}-${(currentDate.getUTCMonth() + 1).toString().padStart(2, '0')}-${currentDate.getUTCDate().toString().padStart(2, '0')}`;
-}
-
-// Helper: Get Current Time in HH:MM:SS UTC format
-async function getCurrentTime() {
-    const currentDate = new Date();
-    return `${currentDate.getUTCHours().toString().padStart(2, '0')}:${currentDate.getUTCMinutes().toString().padStart(2, '0')}:${currentDate.getUTCSeconds().toString().padStart(2, '0')} UTC`;
-}
+} from "firebase/firestore"; 
+import { getFullyBookedTimes, getCurrentTime, generateRemainingTimes } from "../utils/time-functions/getBookingTimes.js";
+import { isToday, getNextHour, isValidDate, getCurrentDate } from "../utils/time-functions/getDate.js";
 
 // Book a Lesson for a Teacher
 export async function bookLessonForTeacher(teacherID, bookingDate, time, userEmail, tutorSubject, tutorDescription) {
@@ -105,6 +88,7 @@ export async function deleteBookingForTeacher(teacherID, bookingDate, time) {
 
 // Check for Available Time Slots on a Date
 export async function checkTimeSlotsFromDate(dateSelected) {
+
     try {
         if (!isValidDate(dateSelected)) {
             console.log("Invalid Date Entered");
@@ -134,6 +118,7 @@ export async function checkTimeSlotsFromDate(dateSelected) {
         });
 
         const fullyBookedTimes = getFullyBookedTimes(teacherIDs, teacherBookedSlots);
+
         const remainingTimes = generateRemainingTimes(fullyBookedTimes);
         
         console.log(remainingTimes);
@@ -222,49 +207,6 @@ export async function checkWhosAvailableAtTime(dateSelected, timeSelected) {
     }
 }
 
-// Helper: Get Fully Booked Times
-function getFullyBookedTimes(teachers, bookings) {
-    const fullyBookedTimes = new Set();
-    const uniqueTimes = [...new Set(bookings.map(booking => booking.time))];
-
-    uniqueTimes.forEach(time => {
-        const allBooked = teachers.every(teacherID => {
-            const booking = bookings.find(b => b.teacherID === teacherID && b.time === time);
-            return booking && booking.isBooked;
-        });
-        if (allBooked) fullyBookedTimes.add(time);
-    });
-
-    return [...fullyBookedTimes];
-}
-
-// Helper: Generate Available Times from Given Range
-export function generateRemainingTimes(providedTimes = [], startTime = '8:00 AM', endTime = '8:00 PM') {
-    const times = [];
-    const convertTo24Hour = timeStr => {
-        let [time, modifier] = timeStr.split(' ');
-        let [hours, minutes] = time.split(':');
-        if (hours === '12') hours = '00';
-        if (modifier === 'PM' && hours !== '12') hours = String(parseInt(hours, 10) + 12);
-        return new Date(1970, 0, 1, hours, minutes);
-    };
-    const formatTo12Hour = date => date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-
-    let currentTime = convertTo24Hour(startTime);
-    const endTimeDate = convertTo24Hour(endTime);
-    const providedTimesSet = new Set(providedTimes.map(time => time.toUpperCase()));
-
-    while (currentTime <= endTimeDate) {
-        const formattedTime = formatTo12Hour(currentTime);
-        if (!providedTimesSet.has(formattedTime.toUpperCase())) {
-            times.push(formattedTime);
-        }
-        currentTime.setHours(currentTime.getHours() + 1);
-    }
-
-    return times;
-}
 
 
 // bookLessonForTeacher(3, "2024-09-28", "10:00 AM", "example_user@gmail.com", "bio", "shush");
-obtainFullyBookedTimes("2024-09-28");

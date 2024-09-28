@@ -19,6 +19,11 @@ const FullScreenCard = () => {
   const [availableTimes, setAvailableTimes] = useState([]);
   const [currentSlideData, setCurrentSlideData] = useState(null);
   const [currentAvailableTeacherData, setCurrentAvailableTeacherData] = useState([]);
+  const [isCardVisible, setCardVisible] = useState(true);
+
+  const handleToggle = () => {
+    setCardVisible(false); // Hide the card when toggle is activated
+  };
 
   const handleAvailableTimesChange = (times) => {
     setAvailableTimes(times);
@@ -125,7 +130,7 @@ const FullScreenCard = () => {
           </div>
 
           <div className="mt-4">
-            {!notificationEnabled && <GetNotifiedCard />}
+            {!notificationEnabled && <GetNotifiedCard onToggle={handleToggle} isVisible={isCardVisible}/>}
           </div>
 
           <div className="flex flex-col mt-4">

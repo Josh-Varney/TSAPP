@@ -1,10 +1,6 @@
 import { db } from "./firebase.js"; // Adjust the path if necessary
 import { collection, getDocs, getDoc, setDoc, where, query, doc, deleteDoc } from "firebase/firestore"; // Import necessary Firestore functions
-
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
+import { isValidEmail } from "../utils/authenticate-functions/credential-authentication.js";
 
 export async function obtainTeacherProfile(teacherID) {
     try {

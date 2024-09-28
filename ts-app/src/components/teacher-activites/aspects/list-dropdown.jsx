@@ -16,7 +16,7 @@ const DropdownList = ({ items }) => {
 
   // If there are no teachers, display a message
   if (items.length === 0) {
-    return <p>Please Select a time</p>;
+    return <p className='mt-4 mb-0 text-gray-600 text-sm text-center'>Please Select a time</p>;
   }
 
   return (

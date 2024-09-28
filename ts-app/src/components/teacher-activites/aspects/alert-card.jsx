@@ -1,8 +1,11 @@
-import React from "react";
-import { PiBellRingingFill } from "react-icons/pi";
-import ToggleSwitch from "./toggle";
+import React from 'react';
+import { PiBellRingingFill } from 'react-icons/pi'; 
+import ToggleSwitch from './toggle';
 
-const GetNotifiedCard = () => {
+const GetNotifiedCard = ({ onToggle, isVisible }) => {
+    // Only render if isVisible is true
+    if (!isVisible) return null;
+
     return (
         <div className="flex flex-col w-full p-4 bg-white shadow-lg rounded-lg mx-auto">
             <div className="flex items-center space-x-3">
@@ -13,7 +16,7 @@ const GetNotifiedCard = () => {
                 <p className="text-sm text-gray-700">
                     Configure your alert in one click with your predefined filters
                 </p>
-                <ToggleSwitch />
+                <ToggleSwitch onToggle={onToggle} />
             </div>
             <div className="mt-4">
                 <a href="#" className="text-blue-500 font-semibold text-md">Manage Alerts</a>
