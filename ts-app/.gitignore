@@ -17,8 +17,7 @@
 
 
 # json file
-staff.json
-env.json
+next.config.js
 
 # misc
 .DS_Store
