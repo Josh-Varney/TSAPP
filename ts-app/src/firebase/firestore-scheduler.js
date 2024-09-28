@@ -100,7 +100,6 @@ export async function checkTimeSlotsFromDate(dateSelected) {
         const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
-            // console.log("No schedule found for the selected date.");
             return generateRemainingTimes([]);
         }
 
@@ -119,10 +118,12 @@ export async function checkTimeSlotsFromDate(dateSelected) {
 
         const fullyBookedTimes = getFullyBookedTimes(teacherIDs, teacherBookedSlots);
 
-        const remainingTimes = generateRemainingTimes(fullyBookedTimes);
-        
-        console.log(remainingTimes);
-        return remainingTimes;
+        if (isToday(dateSelected)){
+            const hour = getNextHour();
+            return generateRemainingTimes(fullyBookedTimes, hour);
+        } else {
+            return generateRemainingTimes(fullyBookedTimes);
+        }
 
     } catch (error) {
         console.error("Error checking time slots:", error.message);
