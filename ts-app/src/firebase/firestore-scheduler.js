@@ -1,3 +1,4 @@
+import { fetchFullyBookedTimes } from "../middleware/server-middle.js";
 import { db } from "./firebase.js"; // Adjust the import as necessary
 import { getAllTeacherIDs, checkTeacherID } from "./firestore-teachers.js";
 import {
@@ -143,6 +144,46 @@ export async function checkTimeSlotsFromDate(dateSelected) {
     }
 }
 
+export async function obtainFullyBookedTimes(dateSelected) {
+    try {
+        if (!isValidDate(dateSelected)) {
+            console.log("Invalid Date Entered");
+            return;
+        }
+
+        const teacherIDs = await getAllTeacherIDs();
+        const docRef = doc(db, 'scheduler', dateSelected);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+            console.log("No schedule found for the selected date. So no booking for this time");
+            return [];
+        }
+
+        const existingSchedule = docSnap.data()?.schedule || {};
+        const teacherBookedSlots = [];
+
+        Object.entries(existingSchedule).forEach(([time, teachers]) => {
+            teachers.forEach(teacher => {
+                teacherBookedSlots.push({
+                    time,
+                    teacherID: teacher.teacherID,
+                    isBooked: teacher.bookingDetails.isBooked,
+                });
+            });
+        });
+
+        const fullyBookedTimes = getFullyBookedTimes(teacherIDs, teacherBookedSlots);
+
+        // console.log(fullyBookedTimes);
+
+        return fullyBookedTimes;
+
+    } catch (error) {
+        console.error("Error checking time slots:", error.message);
+    }
+}
+
 // Check Available Teachers at a Specific Time
 export async function checkWhosAvailableAtTime(dateSelected, timeSelected) {
     try {
@@ -198,7 +239,7 @@ function getFullyBookedTimes(teachers, bookings) {
 }
 
 // Helper: Generate Available Times from Given Range
-function generateRemainingTimes(providedTimes = [], startTime = '8:00 AM', endTime = '8:00 PM') {
+export function generateRemainingTimes(providedTimes = [], startTime = '8:00 AM', endTime = '8:00 PM') {
     const times = [];
     const convertTo24Hour = timeStr => {
         let [time, modifier] = timeStr.split(' ');
@@ -223,3 +264,7 @@ function generateRemainingTimes(providedTimes = [], startTime = '8:00 AM', endTi
 
     return times;
 }
+
+
+// bookLessonForTeacher(3, "2024-09-28", "10:00 AM", "example_user@gmail.com", "bio", "shush");
+obtainFullyBookedTimes("2024-09-28");

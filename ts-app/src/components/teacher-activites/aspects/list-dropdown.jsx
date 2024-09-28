@@ -1,16 +1,7 @@
 import React, { useState } from 'react';
-import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md";
+import { MdOutlineKeyboardArrowUp, MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import PrivateLessonCarousel from './private-lesson-carousel';
-
-const DropdownList = () => {
-
-  // Pass Through The Available Teachers 
-  const items = [
-    { name: 'Joshua Varney', subtitle: 'Subtitle Tags' },
-    { name: 'Daniel Stanley', subtitle: 'Subtitle Tags' },
-    { name: 'John Thompson', subtitle: 'Subtitle Tags' }
-  ];
-
+const DropdownList = ({ items }) => {
   // State to track which item is expanded
   const [expandedIndex, setExpandedIndex] = useState(null);
 
@@ -22,6 +13,11 @@ const DropdownList = () => {
       setExpandedIndex(index); // Expand clicked item
     }
   };
+
+  // If there are no teachers, display a message
+  if (items.length === 0) {
+    return <p>Please Select a time</p>;
+  }
 
   return (
     <div>

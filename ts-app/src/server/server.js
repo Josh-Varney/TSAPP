@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { db } from '../firebase/firebase.js';
-import { checkTimeSlotsFromDate, checkWhosAvailableAtTime } from '../firebase/firestore-scheduler.js'; 
+import { checkTimeSlotsFromDate, checkWhosAvailableAtTime, obtainFullyBookedTimes } from '../firebase/firestore-scheduler.js'; 
 import { checkTeacherID, obtainTeacherProfile } from '../firebase/firestore-teachers.js';
 
 const app = express();
@@ -63,6 +63,21 @@ app.get('/api/getTeacherProfile', async (req, res) => {
     } catch (error) {
         console.error("Error fetching teacher profile:", error);
         return res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/getFullyBookedTimes', async (req, res) => {
+    const { dateSelected } = req.query;
+
+    if (!dateSelected) {
+        return res.status(400).send('Date is required');
+    }
+    try {
+        const fullyBookedTimes = await obtainFullyBookedTimes(dateSelected);
+        res.json(fullyBookedTimes);
+    } catch (error) {
+        console.error('Error fetching available times:', error);
+        res.status(500).send('Error fetching available times');
     }
 });
 

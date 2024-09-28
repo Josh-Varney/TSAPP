@@ -8,18 +8,17 @@ import OpenLessonsCarousel from './open-lesson-carousel';
 import DropdownList from './list-dropdown';
 import { getNextThreeWeeks } from '../func-js/time-slot';
 import { getDateTimeString } from '../func-js/time-slot';
-import { fetchAvailableTimes, fetchAvailableTeachers, fetchTeacherProfile } from '../../../middleware/server-middle';
-
+import { fetchAvailableTimes, fetchAvailableTeachers, fetchTeacherProfile, fetchFullyBookedTimes } from '../../../middleware/server-middle';
+import { generateRemainingTimes } from '../../../firebase/firestore-scheduler';
 
 const FullScreenCard = () => {
   const [selectedCard, setSelectedCard] = useState(null);
-  const [slotsAvailable, setSlotsAvailable] = useState(false);
   const [notificationEnabled, setNotificationsEnabled] = useState(false);
   const [openLessonEnabled, setOpenLessonEnabled] = useState(true);
-  const [bookLessonEnabled, setBookLessonEnabled] = useState(false);
   const [slideData, setSlideData] = useState([]);
   const [availableTimes, setAvailableTimes] = useState([]);
   const [currentSlideData, setCurrentSlideData] = useState(null);
+  const [currentAvailableTeacherData, setCurrentAvailableTeacherData] = useState([]);
 
   const handleAvailableTimesChange = (times) => {
     setAvailableTimes(times);
@@ -32,33 +31,39 @@ const FullScreenCard = () => {
   };
 
   const handleCurrentSlideDataChange = (slideData) => {
-    setCurrentSlideData(slideData); 
+    setCurrentSlideData(slideData);
   };
 
-  // Function to handle mini card clicks and log the time
   const handleMiniCardClick = async (time) => {
     const dateSelectedString = getDateTimeString(currentSlideData.month, currentSlideData.date);
 
     const availableTeachers = await fetchAvailableTeachers(dateSelectedString, time);
-
-    if (availableTeachers){
+    if (availableTeachers) {
       const profiles = await Promise.all(
         availableTeachers.map(teacher => fetchTeacherProfile(teacher))
       );
+
+      const transformed_profiles = profiles.map(teacher => ({
+        name: `${teacher.firstName} ${teacher.lastName}`,
+        subtitle: `${teacher.teacherEmail}`,
+      }));
+
+      setCurrentAvailableTeacherData(transformed_profiles);
     }
-    
-    setSelectedCard(time); 
+
+    setSelectedCard(time);
   };
 
   const renderMiniCardRows = (cards) => {
     const rows = cards.reduce((acc, time, index) => {
       if (index % 5 === 0) {
-        acc.push([]);
+        acc.push([]); // Create a new row every 5 cards
       }
+
       acc[acc.length - 1].push(
         <MiniCard
-          key={index}
-          id={index}
+          key={time} // Use time as a unique key
+          id={time} // Use time as the id
           time={time}
           isSelected={selectedCard === time}
           onCardClick={() => handleMiniCardClick(time)} // Pass the time to the click handler
@@ -66,7 +71,7 @@ const FullScreenCard = () => {
       );
       return acc;
     }, []);
-    
+
     return rows.map((row, rowIndex) => (
       <div key={rowIndex} className="flex flex-row justify-center space-x-5 mt-4">
         {row}
@@ -106,9 +111,9 @@ const FullScreenCard = () => {
             <TimeCarousel slideData={slideData} onAvailableTimesChange={handleAvailableTimesChange} onCurrentSlideDataChange={handleCurrentSlideDataChange} />
           </div>
 
-          <div className="flex flex-row justify-between mt-4 items-center">
+          <div className="flex flex-row justify-between mt-5 items-center">
             <p className="mb-0 text-gray-600 text-xs">Show available slots only</p>
-            <ToggleSwitch />
+            {/* <ToggleSwitch initialChecked={false}/> */}
           </div>
 
           <div className='flex flex-col items-center mt-4'>
@@ -139,29 +144,17 @@ const FullScreenCard = () => {
           </div>
 
           <div className="mt-4">
-            {!bookLessonEnabled ? (
-              <div>
-                <p className="text-gray-800 font-semibold">Book a lesson</p>
-                <p className="text-gray-600 text-xs">There aren't any Lessons available at this time. Try another time. ⏰</p>
-
-                <div className="flex flex-row justify-between mt-4 items-center">
-                  <p className="mb-0 text-gray-600 text-xs">Show available teachers only</p>
-                  <ToggleSwitch />
-                </div>    
-              </div>
-            ) : (
-              <div>
-                <p className="text-gray-800 font-semibold">Book a lesson</p>
-                <p className="text-gray-600 text-sm">Create a private lesson for yourself or others.</p>
-
-                <div className="flex flex-row justify-between mt-4 items-center">
-                  <p className="mb-0 text-gray-600 text-sm">Show available teachers only</p>
-                  <ToggleSwitch />
-                </div>                
-              </div>
-            )}
             <div>
-              <DropdownList />
+              <p className="text-gray-800 font-semibold">Book a lesson</p>
+              <p className="text-gray-600 text-sm">Create a private lesson for yourself or others.</p>
+
+              <div className="flex flex-row justify-between mt-4 items-center">
+                <p className="mb-0 text-gray-600 text-sm">Show available teachers only</p>
+                {/* <ToggleSwitch /> */}
+              </div>
+            </div>
+            <div>
+              <DropdownList items={currentAvailableTeacherData}/>
             </div>
           </div>
         </div>

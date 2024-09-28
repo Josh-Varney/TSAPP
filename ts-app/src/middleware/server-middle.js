@@ -31,6 +31,8 @@ export async function fetchTeacherProfile(teacherID) {
     return fetchData(url);
 }
 
-
-const data = await fetchTeacherProfile(3);
-console.log(data);
+export async function fetchFullyBookedTimes(dateSelected){
+    console.log(dateSelected);
+    const url = `${env.SERVER_API}/api/getFullyBookedTimes?dateSelected=${dateSelected}`;
+    return fetchData(url);
+}
