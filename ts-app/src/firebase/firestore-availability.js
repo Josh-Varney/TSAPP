@@ -35,6 +35,7 @@ function formatTime12(date) {
     return `${hours}:${minutes.toString().padStart(2, '0')} ${modifier}`;
 }
 
+// DETERMINE IF THE TEACHER IS AVAILABLE
 async function checkTeacherAvailability(teacherID, date, requestedTime12h) {
     try {
         // Validate the teacher ID
@@ -213,23 +214,29 @@ function generateTimeSlots() {
 }
 
 
-async function findFullyBookedSlots(date) {
+export async function findFullyBookedSlots(date) {
     const timeSlots = generateTimeSlots(); // Get the time slots
     const teacherIDs = await getAllTeacherIDs(); // Fetch teacher IDs
     const numericTeacherIDs = teacherIDs.map(id => Number(id));
     const fullyBooked = []; // Array to store fully booked slots
+    const availableSlot = [];
 
     // Loop through each time slot
     for (let time of timeSlots) {
         const availableTeachers = await checkAllTeacherAvailability(numericTeacherIDs, date, time);
         if (availableTeachers.length === 0) {
             fullyBooked.push(time); // If no available teachers, push the time slot to fullyBooked
+        } else {
+            availableSlot.push(time);
         }
     }
-    return fullyBooked; // Return the list of fully booked time slots
+    return {
+        bookedSlots: fullyBooked,
+        availableSlots: availableSlot
+    }; // Return the list of fully booked time slots
 }
 
-async function checkAllTeacherAvailability(teacherIDList, date, time) {
+export async function checkAllTeacherAvailability(teacherIDList, date, time) {
     if (teacherIDList && Array.isArray(teacherIDList)) {
         // Array to hold IDs of available teachers
         const availableTeacherIDs = [];
@@ -253,7 +260,10 @@ async function checkAllTeacherAvailability(teacherIDList, date, time) {
 }
 
 // const ids = await checkAllTeacherAvailability([1, 2, 3], "2024-09-28", "05:00 PM");
+// console.log(ids);
+
 // const lessonLength = await getAvailableSlots(2, "2024-09-28", "04:00 PM")
 // console.log(lessonLength);
-// const fullyBookedSlots = await findFullyBookedSlots("2024-09-28");
-// console.log(fullyBookedSlots);
+
+// const {bookedSlots, availableSlots } = await findFullyBookedSlots("2024-09-28");
+// console.log(availableSlots);

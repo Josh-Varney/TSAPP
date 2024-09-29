@@ -17,11 +17,8 @@ const TimeCarousel = ({ slideData, onAvailableTimesChange, onCurrentSlideDataCha
 
     const dateSelected = getDateTimeString(day, monthAbbr);
     
-    // Fetch available times based on the selected date
-    const availableTimes = await fetchAvailableTimes(dateSelected);
-    
     // Call the function to pass available times back to FullScreenCard
-    onAvailableTimesChange(availableTimes);
+    onAvailableTimesChange(dateSelected);
   };
 
   return (

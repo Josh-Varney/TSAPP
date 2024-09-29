@@ -3,7 +3,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { db } from '../firebase/firebase.js';
 import { checkTimeSlotsFromDate, checkWhosAvailableAtTime, obtainFullyBookedTimes } from '../firebase/firestore-scheduler.js'; 
-import { checkTeacherID, obtainTeacherProfile } from '../firebase/firestore-teachers.js';
+import { checkTeacherID, getAllTeacherIDs, obtainTeacherProfile } from '../firebase/firestore-teachers.js';
+import { checkAllTeacherAvailability, findFullyBookedSlots } from '../firebase/firestore-availability.js';
 
 const app = express();
 const PORT = 5000;
@@ -15,12 +16,21 @@ app.use(bodyParser.json()); // Corrected to invoke json() middleware
 // API endpoint to fetch available times
 app.get('/api/getAvailableTimes', async (req, res) => {
     const { date } = req.query;
+
     if (!date) {
         return res.status(400).send('Date is required');
     }
+
     try {
-        const timesAvailable = await checkTimeSlotsFromDate(date);
-        res.json(timesAvailable);
+        // Fetch both bookedSlots and availableSlots from your function
+        const { bookedSlots, availableSlots } = await findFullyBookedSlots(date);
+        
+        // Return both values in the response as an object
+        res.json({
+            bookedSlots,     // Booked slots for the day
+            availableSlots   // Available slots for the day
+        });
+
     } catch (error) {
         console.error('Error fetching available times:', error);
         res.status(500).send('Error fetching available times');
@@ -35,7 +45,8 @@ app.get('/api/getAllAvailableTeachersAtTimeSelected', async (req, res) => {
     }
     try {
         // Logic to fetch available teachers will go here
-        const teachersAvailable = await checkWhosAvailableAtTime(dateSelected, timeSelected);
+        const teacherIDs = await getAllTeacherIDs();
+        const teachersAvailable = await checkAllTeacherAvailability(teacherIDs, dateSelected, timeSelected);
         res.json(teachersAvailable);
     } catch (error) {
         console.error('Error fetching teachers:', error);
@@ -63,22 +74,6 @@ app.get('/api/getTeacherProfile', async (req, res) => {
     } catch (error) {
         console.error("Error fetching teacher profile:", error);
         return res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-// CHANGE
-app.get('/api/getFullyBookedTimes', async (req, res) => {
-    const { dateSelected } = req.query;
-
-    if (!dateSelected) {
-        return res.status(400).send('Date is required');
-    }
-    try {
-        const fullyBookedTimes = await obtainFullyBookedTimes(dateSelected);
-        res.json(fullyBookedTimes);
-    } catch (error) {
-        console.error('Error fetching available times:', error);
-        res.status(500).send('Error fetching available times');
     }
 });
 
